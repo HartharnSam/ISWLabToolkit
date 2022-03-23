@@ -1,0 +1,27 @@
+function DigiFlowColormaps
+disp('bipolar');
+disp('bipolar2');
+disp('bipolar3');
+disp('bipolar4');
+disp('bipolar5');
+disp('--');
+disp('circular');
+disp('jfm_base');
+disp('jfm_extended');
+disp('negative');
+disp('greyscale');
+disp('--');
+disp('random_bipolar');
+disp('random_random');
+disp('random_constant');
+disp('random_invertedBipolar');
+disp('random_linear');
+disp('--');
+disp('schlieren');
+disp('schlieren_hot');
+disp('--');
+disp('singlecycle');
+disp('singlecycle_zero');
+disp('singlecycle_doubleBrightness');
+disp('singlecycle_aperture');
+disp('singlecycle_halfBrightness');
