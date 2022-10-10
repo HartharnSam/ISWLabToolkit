@@ -1,0 +1,276 @@
+# File: D:\Sam\Shoal_Core\Camera_Data\test1\twocamerastest.dfc
+# dfcConsole
+#-----------------------------#
+# Execute line
+# Date: Tue Aug  4 12:11:51 2020
+# Build date: 12 March 2020
+################################
+# File: D:\Sam\Shoal_Core\Camera_Data\test1\twocamerastest.dfc
+# dfcConsole
+#-----------------------------#
+################################
+####### SECTION 1 ##############
+################################
+
+close_all_views();
+
+Cameras.BFBoards := [0, 1];
+Cameras.Names := ["_CamA", "_CamB"];
+
+## Set options
+camera_select_board(Cameras.BFBoards[0]);
+dlg := get_dialog_response("dlgFile_CaptureVideo");
+if (is_null(dlg)) {
+showDlg := true;
+dlg.process := "File_CaptureVideo";
+};
+
+dlg.Output := "V:\Capture\" + "Capture_Video" + Cameras.Names[0] + ".dfm";
+dlg.Output_Folder := "V:\Capture\";#current_directory(); 
+delete_file(dlg.Output);
+dlg.Output_Options.UseArchive := false;
+dlg.DisplayDuringCapture := true;
+
+status_bar_message("Opening capture dialog...");
+dlg := dialog dlg;
+if (is_null(dlg)) {
+	quit;
+	};
+dlg.Output := "V:\Capture\" + "Capture_Video" + Cameras.Names[0] + ".dfm";
+dlg.Output_Folder := "V:\Capture\"; 
+set_dialog_response("dlgFile_CaptureVideo", dlg);
+
+ctrl.fpsAcquire := dlg.fpsCapture;
+ctrl.fpsDisplay := dlg.Gain;
+ctrl.shutterSpeed := dlg.ShutterSpeed;
+ctrl.processFrame := dlg.ProcessFrame; # try := "rotate 180";
+ctrl.displayProcess := dlg.DisplayProcessing;
+ctrl.nFrames := int(dlg.Time*dlg.fpsCapture);
+ctrl.nBits := dlg.nSaveBits;
+ctrl.Time := dlg.Time;
+# try: ctrl.displayResFactor := 4;
+status_bar_message("Capture options set");
+ctrl; 
+
+## Prepare multi cameras
+nB := x_size(Cameras.BFBoards);
+
+# For first camera
+status_bar_message("Opening "+ Cameras.Names[0]);
+iBoard := Cameras.BFBoards[0];
+camera_select_board(iBoard);
+hThisA := camera_get_view();
+
+camFileNames := "V:\Capture\" + "Capture_Video" + Cameras.Names[0] +".dfm";
+
+if (is_null(hThisA)) {
+	hThisA := camera_live_view(ctrl);
+	view_title(hThisA, "Live View: " + Cameras.Names[0]);
+	ret := camera_wait_for_preprocess();
+	
+	camera_get_view();
+	camera_capture_file(camFileNames, nFrames := ctrl.nFrames, nBits := ctrl.nBits);
+	#camera_wait_for_capture_ready();
+	start_timer(5); 
+	wait_for_timer();
+	};
+	
+# Repeat for second camera
+status_bar_message("Opening "+ Cameras.Names[1]);
+iBoard := Cameras.BFBoards[1];
+camera_select_board(iBoard);
+hThisB := camera_get_view();
+
+camFileNames := "V:\Capture\" + "Capture_Video" + Cameras.Names[1] +".dfm";
+delete_file(camFileNames);
+
+status_bar_message("Now run Section 2");
+################################
+####### SECTION 2 ##############
+################################
+
+if (is_null(hThisB)) {
+	hThisB := camera_live_view(ctrl);
+	view_title(hThisB, "Live View: " + Cameras.Names[1]);
+	ret := camera_wait_for_preprocess();
+	
+	camera_get_view();
+	camera_capture_file(camFileNames, nFrames := ctrl.nFrames, nBits := ctrl.nBits);
+#	camera_wait_for_capture_ready();
+	start_timer(5); 
+	wait_for_timer();
+
+	};
+message_modeless("Live Views all open");
+
+
+status_bar_message("Now run Section 3");
+################################
+####### SECTION 3 ##############
+################################
+
+## Begin Capture
+star := ask_yesno_modeless("Start Video Capture?" + new_line + "Requested: " + make_string(ctrl.fpsAcquire, "f4.1")+ " images/s for " + make_string(ctrl.nFrames, "i5")+" frames (" + make_string(ctrl.Time, "1f5.1")+"seconds)", "Live Video", allowCancel:=false);
+if (star = false) {
+	quit;
+	};
+
+camera_start_capture(Cameras.BFBoards);
+message_modeless("Press ok to STOP capture", "Video Capture", cancel:=false);
+ret := camera_stop_capture(Cameras.BFBoards, createArchive:=false);
+
+close_view(hThisA); 
+close_view(hThisB);
+
+
+
+status_bar_message("Now run Section 4");
+################################
+####### SECTION 4 ##############
+################################
+
+if (ret[0].nMissed>0) {
+	message_modeless("Frames missed during capture A" + new_line +  "Review next dialogue with care");
+	};
+
+message_modeless("Capture A complete!" + new_line + 
+	new_line+
+	make_string(ret[0].nFrames, "i5")+" images saved (" + make_string(ret[0].nRequested, "i5")+"requested) in " + make_string(ret[0].time, "f5.1") + " seconds" + new_line+
+	new_line +
+	"Achieved: " + make_string(ret[0].fpsAchieved, "1f4.1")+" images/s; "+make_string(ret[0].MBytesPerSecond, "1f4.1")+" MBytes/s"+new_line+
+	"Requested: " + make_string(ret[0].fpsRequested, "1f4.1") + " images/s" + new_line + 
+	new_line + 
+	"CPU time required: " + make_string(ret[0].cpuTime, "f5.3") + " s; Missed: "+make_string(ret[0].nMissed, "i3") + " frames" + new_line+ 
+	"Acq buffer: " + make_string(ret[0].nMissedAcquisition, "i3")+" ; Proc buffer: " + make_string(ret[0].nMissedProcess, "i3") + " ; Save buffer: "+make_string(ret[0].nMissedSave, "i3")+new_line+
+	new_line+new_line+
+	"You must now review the movie before it can be saved." + new_line+
+	new_line+
+	"OK will start the review process" + new_line+
+	"CANCEL will discard the movie", 
+	"Video Capture A", cancel:=false);
+	
+message_modeless("Capture B complete!" + new_line + 
+	new_line+
+	make_string(ret[1].nFrames, "i5")+" images saved (" + make_string(ret[1].nRequested, "i5")+"requested) in " + make_string(ret[1].time, "f5.1") + " seconds" + new_line+
+	new_line +
+	"Achieved: " + make_string(ret[1].fpsAchieved, "1f4.1")+" images/s; "+make_string(ret[1].MBytesPerSecond, "1f4.1")+" MBytes/s"+new_line+
+	"Requested: " + make_string(ret[1].fpsRequested, "1f4.1") + " images/s" + new_line + 
+	new_line + 
+	"CPU time required: " + make_string(ret[1].cpuTime, "f5.3") + " s; Missed: "+make_string(ret[1].nMissed, "i3") + " frames" + new_line+ 
+	"Acq buffer: " + make_string(ret[1].nMissedAcquisition, "i3")+" ; Proc buffer: " + make_string(ret[1].nMissedProcess, "i3") + " ; Save buffer: "+make_string(ret[1].nMissedSave, "i3")+new_line+
+	new_line+new_line+
+	"You must now review the movie before it can be saved." + new_line+
+	new_line+
+	"OK will start the review process" + new_line+
+	"CANCEL will discard the movie", 
+	"Video Capture B", cancel:=false);
+
+
+
+
+## Now review footage and save
+
+  dlg := get_dialog_response("dlgFile_CameraFile");
+  dlg.process := "File_CameraFile";
+  OK := false;
+  dlgList := make_list(dlg, 2);
+  n := 0;
+  while (not(OK)) {
+  	FileList := "";
+  	## For camera 1
+  	camera_select_board(Cameras.BFBoards[0]);
+  	dlg.ReviewCapture := true;
+  	dlg.Output_Options.DeleteExisting := true;
+  	dlg.Input := "V:\Capture\" + "Capture_Video" + Cameras.Names[0] +".dfm";
+	dlg.Input_Folder := "V:\Capture\";
+
+
+  	if (exists("dlg.Output")) {
+  		iLen := length(dlg.Output);
+  		jLen := length(Cameras.Names[0]);
+  		c := mid_string(dlg.Output, iLen-jLen-3, jLen);
+  		rep := false;
+  		for this := Cameras.Names {
+  			rep := rep or this = c;
+  			};
+  		if (rep) {
+  			dlg.Output := left_string(dlg.Output, iLen-jLen-4) + Cameras.Names[0] + right_string(dlg.Output, 4);
+  		} else {
+  			dlg.Output := left_string(dlg.Output, iLen-4) + Cameras.Names[0]+right_string(dlg.Output, 4);
+  		};
+  	} else {
+  		dlg.Output := "Video"+Cameras.Names[0]+".dfm";
+  	}; 
+  	dlg := dialog dlg;
+  	if (is_null(dlg)) {
+  		message_modeless("ERROR: Dialog returns 'Null'");
+  		quit;
+  	};
+  	dlg.Output_Options.DeleteExisting := true;
+  	FileList += new_line + dlg.Output;
+  	dlgList[0]  := dlg;
+  OK := ask_yesno(" You are saving the camera data to the following files: "+new_line+FileList+new_line+new_line+"Are you happy with this?", "Multiple Cameras", true);
+  if (is_null(OK)) {
+  	quit;
+  }; 
+    }; # End of While loop 
+
+  set_dialog_response("dlgFile_CameraFile", dlgList[0]);
+  hTh := make_array(0, nB);
+  this := dlgList[0];
+  hTh[0] := process_as_thread this;
+  status_bar_message("Wait for copying to finish...");
+  wait_for_end(hTh[0]);
+  status_bar_message("review Complete");
+  
+  ## Repeat for camera 2
+   dlg := get_dialog_response("dlgFile_CameraFile");
+  dlg.process := "File_CameraFile";
+  OK := false;
+  n := 0;
+
+    while (not(OK)) {
+  	FileList := "";
+  	camera_select_board(Cameras.BFBoards[1]);
+  	dlg.ReviewCapture := true;
+  	dlg.Output_Options.DeleteExisting := true;
+    	dlg.Input := "V:\Capture\" + "Capture_Video" + Cameras.Names[0] +".dfm";
+	dlg.Input_Folder := "V:\Capture\";
+
+  	if (exists("dlg.Output")) {
+  		iLen := length(dlg.Output);
+  		jLen := length(Cameras.Names[1]);
+  		c := mid_string(dlg.Output, iLen-jLen-3, jLen);
+  		rep := false;
+  		for this := Cameras.Names {
+  			rep := rep or this = c;
+  			};
+  		if (rep) {
+  			dlg.Output := left_string(dlg.Output, iLen-jLen-4) + Cameras.Names[1] + right_string(dlg.Output, 4);
+  		} else {
+  			dlg.Output := left_string(dlg.Output, iLen-4) + Cameras.Names[1]+right_string(dlg.Output, 4);
+  		};
+  	} else {
+  		dlg.Output := "Video"+Cameras.Names[1]+".dfm";
+  	}; 
+  	dlg := dialog dlg;
+  	if (is_null(dlg)) {
+  		message_modeless("ERROR: Dialog returns 'Null'");
+  		quit;
+  	};
+  	dlg.Output_Options.DeleteExisting := true;
+  	FileList += new_line + dlg.Output;
+  	dlgList[1]  := dlg;
+  OK := ask_yesno(" You are saving the camera data to the following files: "+new_line+FileList+new_line+new_line+"Are you happy with this?", "Multiple Cameras", true);
+  if (is_null(OK)) {
+  	quit;
+  }; 
+    }; # End of While loop 
+
+  set_dialog_response("dlgFile_CameraFile", dlgList[0]);
+  hTh := make_array(0, nB);
+  this := dlgList[1];
+  hTh[1] := process_as_thread this;
+  status_bar_message("Wait for copying to finish...");
+  wait_for_end(hTh[1]);
+  status_bar_message("review Complete");
