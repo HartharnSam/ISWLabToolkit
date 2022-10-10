@@ -3,14 +3,14 @@
 This is a toolkit/collection of scripts, functions, bits of files that help to make the lab work go smoothly in the Geophysical Fluid Dynamics lab in Newcastle University. The bulk of most subpackages have been written by other authors and then re-purposed here, acknowledgements are found within the subpackage readmes and individual scripts where possible. 
 
 ## Introduction
-The lab data primarily comes in 2 forms, the recorded videos from cameras, and the density data from microconductivity probes. The scripts contain the main functions to read this data into MATLAB and analyse, as well as in places scripts that interface into other software (primarily here DigiFlow). A couple of the MATLAB scripts help in the basic day-to-day running of the lab, e.g. `copycamfiles.m`, `Camera_parallelisation.m` 
+The lab data primarily comes in 2 forms, the recorded videos from cameras, processed initially in DigiFlow, and the density data from microconductivity probes (which run on an Arduino system). The scripts contain the main functions to read this data into MATLAB and analyse, as well as in places scripts that interface into other software (primarily here DigiFlow). A couple of the MATLAB scripts help in the basic day-to-day running of the lab, e.g. `copycamfiles.m`, `Camera_parallelisation.m` 
 
 There are some other files that are useful, e.g. parameter calculating spreadsheets and records sheets. TODO: Upload these. 
 
 ## Installation 
 ### Full Installation
-git clone --recurse-submodules https://github.com/HartharnSam/ISWLabToolkit
-Then you'll want to add this whole ordeal to your MATLAB path (temporarily with `addpath(genpath('path/to/the/toolkit'));` or permanently by adding that code to `startup.m`
+`git clone --recurse-submodules https://github.com/HartharnSam/ISWLabToolkit`
+Then you'll want to add this whole ordeal to your MATLAB path (temporarily with `addpath(genpath('path/to/the/toolkit'));`) or permanently by adding that code to `startup.m`
 
 ### Partial Installation 
 TODO
