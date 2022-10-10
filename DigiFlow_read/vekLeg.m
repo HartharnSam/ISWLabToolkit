@@ -48,8 +48,9 @@ old_axesPos = f.Position; % Also record the revised position of the axis
                           % so that changes in this due to placement of 
                           % the legend can be retained
 delete(l); % Delete the legend again
-
-f.Position = old_axesPos; % Reposition main axes as if a legend had been placed there
+if ~strcmp(class(f.Parent), 'matlab.graphics.layout.TiledChartLayout')
+    f.Position = old_axesPos; % Reposition main axes as if a legend had been placed there
+end
 
 
 % Calculate width of figure in x units

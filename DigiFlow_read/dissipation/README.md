@@ -4,6 +4,7 @@ These scripts are designed to calculate TKE dissipation from PIV fields recorded
 Basin (AETB) in April 2018 under the direction of Magda Carr. Written by Peter Sutherland
 The primary objective was to study internal solitary wave propagation 
 in ice covered waters.
+
 The scripts have now been modified by Sam Hartharn-Evans for extended use in the Novak Laboratory to study internal solitary wave propagation in ice-covered waters
 
 

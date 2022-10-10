@@ -22,8 +22,17 @@ _To read in .dfi images to MATLAB_
 
 _To read in _
 
-Where users can get help with your project
-Who maintains and contributes to the project
+**Where users can get help with your project**
+contact current maintainer via github.io/HartharnSam , email: s.hartharn-evans2@ncl.ac.uk , twitter @HartharnSam
+
+Project created by Sam Hartharn-Evans, but most code is contributed from other authors, including J.K.Sveen@damtp.cam.ac.uk (digiflow_read), Peter Sutherland (dissipation toolbox), Marek Stastna, Magda Carr, and the DJLES toolbox is Dunphy et al. (2011).
+
+This package is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This package is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+See <https://www.gnu.org/licenses/>.
+
 
 **Users will also need**
 subaxis.m package from https://www.mathworks.com/matlabcentral/fileexchange/3696-subaxis-subplot

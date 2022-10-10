@@ -1,9 +1,5 @@
-function [wavelength] = calc_DJL(h1, h2, h_pyc, amp, rho_1, rho_2)
+function [wavelength, DJL] = calc_DJL(h_1, h_2, h_pyc, wave_amp, rho_1, rho_2)
 %calc_DJL - One line description of what the function or script performs (H1 line)%Optional file header info (to give more details about the function than in the H1 line)
-%Optional file header info (to give more details about the function than in the H1 line)
-%Optional file header info (to give more details about the function than in the H1 line)
-%
-% Syntax:  [output1,output2] = function_name(input1,input2,input3)
 %
 % Inputs:
 %    h1 - Upper layer depth (depth to pyc centre in tanh profile)
@@ -14,19 +10,14 @@ function [wavelength] = calc_DJL(h1, h2, h_pyc, amp, rho_1, rho_2)
 %    rho_2 - Lower Layer Density (kg/m^3)
 %
 % Outputs:
-%    output1 - Description
-%    output2 - Description
+%    wavelength - Computed DJL Wavelength
+%    DJL - Structure containing a host of interesting outputs
 %
-% Example:
-%    Line 1 of example
-%    Line 2 of example
-%    Line 3 of example
-%
-% Other m-files required: none
+% Other m-files required: DJLES package (https://github.com/mdunphy/DJLES)
 % Subfunctions: none
 % MAT-files required: none
 %
-% See also: case_sharp_pycnocline,  OTHER_FUNCTION_NAME2
+% See also: case_large_ape,  OTHER_FUNCTION_NAME2
 % Author: Sam Hartharn-Evans
 % School of Mathematics, Statistics and Physics, Newcastle University
 % email address: s.hartharn-evans2@newcastle.ac.uk
@@ -38,116 +29,97 @@ function [wavelength] = calc_DJL(h1, h2, h_pyc, amp, rho_1, rho_2)
 %% BEGIN CODE %%
 %---------------------------------------------------
 m_path = mpath;
-addpath([m_path, '../08_DJL'])
+addpath([m_path, 'DJLES'])
 
-%% Set up a range of sample APEs
-Ai = (1:10).*[1e-4; 1e-5; .5e-4];
-Ai = Ai(:);
-lab_params; % Load in .m file parameters
+L  = 7.0;  % domain width (m)
+H  = h_1+h_2;  % domain depth (m)
+a_d = 0.019/2; % del_rho
+delrho = abs(rho_1 - rho_2)/rho_2; %
+a_d = delrho/2;
+z0_d = h_1 + (h_pyc/2); % depth of pycnocline
+d_d = h_pyc;
+% Specify the general density profile which takes d_d as a second parameter
+frho=@(z,d_d) 1-a_d*tanh((z+z0_d)/d_d);
+frhoz=@(z,d_d) -(a_d/d_d)*sech((z+z0_d)/d_d).^2; % derivative in z
+
+% The velocity profile (zero for this case) (m/s)
+Ubg=@(z) 0*z; Ubgz=@(z) 0*z; Ubgzz=@(z) 0*z;
+%% Set up a range of sample APEs and calculate corresponding amplitudes
+Ai = (1:10).*[3e-4; 0.5e-5; .5e-4]; % Set up an array of test APEs (m^4/s^2)
+Ai = unique(Ai(:)); % Double check no duplicates & sort
 verbose = 0;
-for i = 1:length(Ai)
+calc_wavelength = false;
+NX = 128; 
+NZ = 64;
+for i = 1:length(Ai) % Test for various APEs
     A = Ai(i);% APE for wave (m^4/s^2)
-    L  = 7.0;  % domain width (m)
-    H  = h_1+h_2;  % domain depth (m)
-    calc_wavelength = false;
-    relax = 0.15; % use strong underrelaxation
-    
-    % Specify the general density profile which takes d_d as a second parameter
-    a_d = 0.019/2; % del_rho
-    a_d = delrho/2;
-    z0_d = h_1; % depth of pycnocline
-    
-    frho=@(z,d_d) 1-a_d*tanh((z+z0_d)/d_d);
-    frhoz=@(z,d_d) -(a_d/d_d)*sech((z+z0_d)/d_d).^2; % derivative in z
-    
-    % The velocity profile (zero for this case) (m/s)
-    Ubg=@(z) 0*z; Ubgz=@(z) 0*z; Ubgzz=@(z) 0*z;
     
     %%%% Find the solution %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     start_time = clock;
-    
-    % Specify resolution and pycnocline parameter d_d according to this schedule
-    NXlist = [  64   128    256     512];
-    NZlist = [  32    64    128     256];
-    ddlist = [0.01  0.01    h_pyc   h_pyc];
-    for ddindex=1:length(ddlist)
-        % Resolution for this wave
-        NX = NXlist(ddindex);
-        NZ = NZlist(ddindex);
+    % Density profile for this wave with specified d_d
+    rho  = @(z) frho(z, d_d);
+    rhoz = @(z) frhoz(z, d_d);
         
-        % Density profile for this wave with specified d_d
-        d_d  = ddlist(ddindex);
-        rho  = @(z) frho(z, d_d);
-        rhoz = @(z) frhoz(z, d_d);
-        
-        % Iterate the DJL solution
-        djles_refine_solution;
-        %djles_diagnostics; djles_plot; % uncomment to view progress at each step
-    end
-    
-    % Reduce epsilon, iterate to convergence
-    epsilon=1e-5;
+    % Iterate the DJL solution
     djles_refine_solution;
-    
-    end_time=clock;
+    %djles_diagnostics; djles_plot; % uncomment to view progress at each step
+       
+    end_time = clock;
     fprintf('Total wall clock time: %f seconds\n',etime(end_time, start_time));
     
-    % Compute and plot the diagnostics
-    %djles_diagnostics
-    %djles_plot
-    % Save some loopy things
+    % Save loopy things
     amps(i, 1) = -wave_ampl;
 end
 
+clearvars -except a_d Ai amps d_d delrho NX NZ fr* H h_* L m_path rho rhoz Ub* verbose wave_amp z0_d
+
 %% Now run for this amplitude
 ActualAPE = interp1(amps, Ai, wave_amp);
+if isnan(ActualAPE)
+    plot(amps, Ai, 'k-'); xlabel('Amplitude'); ylabel('APE');
+    error('Amplitude not within tested range of APEs')
+end
 A = ActualAPE;% APE for wave (m^4/s^2)
 calc_wavelength = true;
-
+epsilon = 1e-4;
+NX = 128; NZ = 64;
 %%%% Find the solution %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 start_time = clock;
 
 % Specify resolution and pycnocline parameter d_d according to this schedule
-NXlist=[  64    128     256     512];
-NZlist=[  32    64      128     256];
-ddlist=[0.01    0.01    h_pyc   h_pyc];
-for ddindex=1:length(ddlist)
-    % Resolution for this wave
-    NX = NXlist(ddindex);
-    NZ = NZlist(ddindex);
-    
-    % Density profile for this wave with specified d_d
-    d_d  = ddlist(ddindex);
-    rho  = @(z) frho(z, d_d);
-    rhoz = @(z) frhoz(z, d_d);
-    
-    % Iterate the DJL solution
-    djles_refine_solution
-    %djles_diagnostics; djles_plot; % uncomment to view progress at each step
-end
-
-% Reduce epsilon, iterate to convergence
+% Iterate the DJL solution
+djles_refine_solution;
+% Increase the resolution, reduce epsilon, and iterate to convergence
 epsilon = 1e-5;
-djles_refine_solution
+NX = 512; NZ = 128;
+djles_refine_solution;
 
-% Raise resolution, iterate to convergence
+% Increase the resolution, and iterate to convergence
 NX = 2048; NZ = 256;
-djles_refine_solution
+djles_refine_solution;
+
+% Compute and plot diagnostics
+djles_diagnostics; djles_plot; 
+wavelength = djles_wavelength(eta,L);
 
 end_time = clock;
 fprintf('Total wall clock time: %f seconds\n',etime(end_time, start_time));
 
-% Compute and plot the diagnostics
-djles_diagnostics;
-djles_plot;
 % Save some loopy things
-APE = A;
-CalcAmp = -wave_ampl;
-wavelength = djles_wavelength(eta,L);
-max_u = max(u(:));
 
-save('DJL', 'Ai', 'amps', 'APE', 'c', 'density','eta', 'etax', 'etaz', 'u', 'ux', 'uxze', 'uz', 'vorticity', 'w', 'wave_amp', 'wavelength', 'wx', 'wz','x', 'xc', 'z', 'zc');
-
+DJL.TestAPEs = Ai; 
+DJL.TestAmps = amps;
+DJL.WaveAPE = A;
+DJL.WaveAmp = -wave_ampl;
+DJL.WaveC = c;
+DJL.density = density; 
+DJL.eta = eta; DJL.etax = etax; DJL.etaz = etaz;
+DJL.u = u; DJL.ux = ux; DJL.uz = uz;
+DJL.vorticity = vorticity;
+DJL.w = w; DJL.wx = wx; DJL.wz =wz; 
+DJL.WaveWavelength = wavelength; 
+DJL.x = xc; DJL.z = zc;
+save('DJL', 'DJL');
 %---------------------------------------------------
 %% END OF CODE %%
 % --------------------------------------------------

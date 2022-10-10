@@ -51,7 +51,11 @@ im = cell(length(fnm_in), 1);
 %x = cell(length(fnm_in), 1); y = cell(length(fnm_in), 1);
 
 for ii = 1:length(fnm_in)
-    im{ii} = dfireadvel(fnm_in{ii});  %File name, read in uncompressed AND uncompacted dfi file
+    if iscell(fnm_in)
+        im{ii} = dfireadvel(fnm_in{ii});  %File name, read in uncompressed AND uncompacted dfi file
+    else
+        im{ii} = dfireadvel(fnm_in);
+    end
     
     %% Set World Coordinate System (if not input as variable)
     if ~exist('grid', 'var') || length(grid) < ii || isempty(grid{ii})
@@ -179,6 +183,21 @@ switch lower(BackgroundType)
         
     case {'timeseries', 'image', 'vorty', 'u', 'v'}
         BG_data = im{1}.cdata(:, :, parameter(1));
+        if isfield(ArgsIn, 'Ice') && ArgsIn.Ice
+            % Add in ice and pycnocline boundaries
+            im_ice_threshold = ArgsIn.ice_threshold; % Threshold for brightness attributed to "Ice"
+            ice_thickness = ArgsIn.ice_thickness; % Max thickness of ice from surface
+            II = find_boundaries(ArgsIn.IceImageFname, 'ice', false, ice_thickness, im_ice_threshold);
+            y_ice = interp1(II.x, II.y_ice, X{1}(1, :));
+            y_ice(isnan(y_ice)) = max(y{1});
+
+            ice_mask = false(im{1}.nx, im{1}.ny);
+            for i = 1:im{1}.nx
+                ice_mask(i, Y{1}(:, i) > y_ice(i)) = 1;
+            end
+            BG_data(ice_mask') = NaN;
+           
+        end
         imagesc(ax, x{1}, y{1}, BG_data) % Plot parameter as colour plot
         try
             caxis(im{1}.caxis')
