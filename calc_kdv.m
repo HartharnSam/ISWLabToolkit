@@ -1,20 +1,9 @@
 function [KdV, c_0] = calc_kdv
-%CALC_KDV_DEPTHCHANGE - % pseudospectral solution of the vertical structure
+%CALC_KDV - % pseudospectral solution of the vertical structure
 % of linear internal waves:
 %  lambda(-D^2+k^2 I)phi = N^2(z)phi
 % on 0<z<H with phi(0)=phi(H)=0
 % This script varies the total depth for a fixed stratification
-%
-% Inputs:
-%    depths - Vector of depths to calculate KdV for
-% Outputs:
-%    output1 - Description
-%    output2 - Description
-%
-% Example:
-%    Line 1 of example
-%    Line 2 of example
-%    Line 3 of example
 %
 % Other m-files required: none
 % Subfunctions: none
@@ -43,7 +32,7 @@ Hdeep = H;
 depths = Hdeep;
 
 g = 9.81; % Assume the lab is on Earth
- delrho = delrho*0.5;
+delrho = delrho*0.5;
 z0deep = h_2;
 d = 0.01; % d - pycnocline halfthickness
 
@@ -58,72 +47,72 @@ Hs = depths;
 %Hs = linspace(Hdeep,0.2*Hdeep,mylen);
 
 %% Run for each depth
-    H=Hs;
+H=Hs;
 
-    dzcdzp=2/H;
-    dzpdzc=(H/2);
-    z0=z0deep+(H-Hdeep);
-    zphys=0.5*H*(zc+1);
-    %dz_num = 1e-8*H;
+dzcdzp=2/H;
+dzpdzc=(H/2);
+z0=z0deep+(H-Hdeep);
+zphys=0.5*H*(zc+1);
+%dz_num = 1e-8*H;
 
-    % inline functions for the density and the derivative of the density
-    myrho=@(z) 1-delrho*tanh((z-z0)/d);
-    myn2=@(z) (g*delrho/d)*sech((z-z0)/d).^2;
-       
+% inline functions for the density and the derivative of the density
+myrho=@(z) 1-delrho*tanh((z-z0)/d);
+myn2=@(z) (g*delrho/d)*sech((z-z0)/d).^2;
+
+figure
+plot(myrho(zphys), zphys);
+n2physical=myn2(zphys);
+%n2max=max(n2physical);
+
+% make up the matrices for the e-val prog.
+
+%define B
+B = -D2*(2/H)^2;
+%define A
+A = diag(n2physical(2:end-1));
+% Solve the e-val prob
+[ev, ee] = eig(A,B);
+[cs, csi]=sort(sqrt(diag(ee)),'descend');
+c1=cs(1); c2=cs(2); %c3=cs(3);
+% This makes sure that the eigenfunction has a maximum of 1
+phi1=ev(:,csi(1));
+%mxphi1=max(phi1);
+mnphi1=min(phi1);
+mxabs=max(abs(phi1));
+if abs(mnphi1)==mxabs
+    phi1=-phi1/mxabs;
+else
+    phi1=phi1/mxabs;
+end
+phi2=ev(:,csi(2));
+%mxphi2=max(phi2);
+mnphi2=min(phi2);
+mxabs2=max(abs(phi2));
+if abs(mnphi2)==mxabs2
+    phi2=-phi2/mxabs2;
+else
+    phi2=phi2/mxabs2;
+end
+if PLOT_NOW==1
     figure
-    plot(myrho(zphys), zphys);
-    n2physical=myn2(zphys);
-    %n2max=max(n2physical);
-
-    % make up the matrices for the e-val prog.
-
-    %define B
-    B = -D2*(2/H)^2;
-    %define A
-    A = diag(n2physical(2:end-1));
-    % Solve the e-val prob
-    [ev, ee] = eig(A,B);
-    [cs, csi]=sort(sqrt(diag(ee)),'descend');
-    c1=cs(1); c2=cs(2); %c3=cs(3);
-    % This makes sure that the eigenfunction has a maximum of 1
-    phi1=ev(:,csi(1));
-    %mxphi1=max(phi1);
-    mnphi1=min(phi1);
-    mxabs=max(abs(phi1));
-    if abs(mnphi1)==mxabs
-        phi1=-phi1/mxabs;
-    else
-        phi1=phi1/mxabs;
-    end
-    phi2=ev(:,csi(2));
-    %mxphi2=max(phi2);
-    mnphi2=min(phi2);
-    mxabs2=max(abs(phi2));
-    if abs(mnphi2)==mxabs2
-        phi2=-phi2/mxabs2;
-    else
-        phi2=phi2/mxabs2;
-    end
-    if PLOT_NOW==1
-        figure
-        betterplots
-        subplot(1,2,1)
-        plot(n2physical,zphys+(Hdeep-H)),grid on,ylabel('z (m)'),xlabel('N^2')
-        subplot(1,2,2)
-        plot(phi1,zphys(2:end-1)+(Hdeep-H)),grid on,ylabel('z (m)'),xlabel('\phi')
-        title(['c1 = ' num2str(c1,4)])
-    end
-    % Here is WNL stuff
-    phi1p = D*[0;phi1;0]*dzcdzp;
-    S1 = sum(w'.*(phi1p.^2)*dzpdzc);
-    r10_1= -0.75*sum(w'.*(phi1p.^3)*dzpdzc)/S1;
-    r01_1 = -0.5*c1*sum(w'.*([0;phi1;0].^2)*dzpdzc)/S1;
-    phi2p = D*[0;phi2;0]*dzcdzp;
-    S2 = sum(w'.*(phi2p.^2)*dzpdzc);
-    r10_2 = -0.75*sum(w'.*(phi2p.^3)*dzpdzc)/S1;
-    r01_2 = -0.5*c2*sum(w'.*([0;phi2;0].^2)*dzpdzc)/S2;
-    c1s = c1;
-    c2s = c2;
+    betterplots
+    subplot(1,2,1)
+    plot(n2physical,zphys+(Hdeep-H)),grid on,ylabel('z (m)'),xlabel('N^2')
+    subplot(1,2,2)
+    plot(phi1,zphys(2:end-1)+(Hdeep-H)),grid on,ylabel('z (m)'),xlabel('\phi')
+    title(['c1 = ' num2str(c1,4)])
+end
+% Here is WNL stuff
+phi1p = D*[0;phi1;0]*dzcdzp;
+S1 = sum(w'.*(phi1p.^2)*dzpdzc);
+r10_1= -0.75*sum(w'.*(phi1p.^3)*dzpdzc)/S1;
+r01_1 = -0.5*c1*sum(w'.*([0;phi1;0].^2)*dzpdzc)/S1;
+phi2p = D*[0;phi2;0]*dzcdzp;
+S2 = sum(w'.*(phi2p.^2)*dzpdzc);
+r10_2 = -0.75*sum(w'.*(phi2p.^3)*dzpdzc)/S1;
+r01_2 = -0.5*c2*sum(w'.*([0;phi2;0].^2)*dzpdzc)/S2;
+c1s = c1;
+c2s = c2;
 
 beta = r01_2;
 alpha = r10_2.*c1;

@@ -1,28 +1,28 @@
-**What the project does** 
+# DigiFlow Read MATLAB Package
+
+## What the project does 
 MATLAB based package/workflow for processing output of DigiFlow
 
-**Why the project is useful**
+## Why the project is useful
 Allows the user to carry out more advanced plot production/data analysis/combination with other data streams in a familiar language
 
-**How to get started with the project**
-Primary I/O scripts are labelled df#read.m or similar. Main script is the dfireadvel for reading in UNCOMPACTED, UNCOMPRESSED .dfi files into a structure im, containing the data, grid info and metadata. 
+## How to get started with the project
+Primary I/O (data reading in) scripts are labelled `df#read.m` or similar. Main script is the `dfireadvel` for reading in UNCOMPACTED, UNCOMPRESSED .dfi (**D**igi**F**low **I**mage) files into a structure `im`, containing the data, grid info and metadata. 
 
-To make plots from any kind of dfi output (a timeseries, PIV, or raw image) use the plot_dfi.m function. 
+To make plots from any kind of dfi output (a timeseries, PIV, or raw image) use the `plot_dfi.m` function. 
 
-dfi_image.m is an overly complex function to call plot_dfi and format those images. 
+`dfi_image.m` is an overly complex function to call `plot_dfi` and format those images. 
 
-/colormaps contains all of DigiFlow's inbuilt colormaps, plus newbluewhitered (perceptually uniform) and bluewhitered (non-perceptually uniform) - which are similar to cmocean('delta');
+`/colormaps` contains all of DigiFlow's inbuilt colormaps, plus newbluewhitered (perceptually uniform) and bluewhitered (non-perceptually uniform) - which are similar to the [cmocean](https://uk.mathworks.com/matlabcentral/fileexchange/57773-cmocean-perceptually-uniform-colormaps) 'delta' colormap. 
 
-combine_digiflow_avi might be helpful for you to combine videos from the two cameras, but its not the best function, check out what you need (e.g. a dfi image with WCS set). In another script of mine I have something that combines directly the .dfi images and plots that, at some stage I'll write it as its own function and share (which would be far easier on many levels).
+`combine_digiflow_avi` might be helpful for you to combine videos from the two cameras into an .avi movie. But its not the best function, check out what you need (e.g. a dfi image with WCS set). `combine_digiflow_images.m` is not perfect, but it does a decent job of directly combining .dfi images and plots together. 
 
-_To read in .dfi images to MATLAB_
-- To read in only the data run im = dfireadvel('filename'); [x, y, dx, dy, nx, ny, x0, y0, xi, yi] = dfi_grid_read(im);  
+### To read in .dfi images to MATLAB 
+- To read in only the data run `im = dfireadvel('filename'); [x, y, dx, dy, nx, ny, x0, y0, xi, yi] = dfi_grid_read(im);`
 - To Make a simple plot run plot_dfi;
 - To make more complex plots or movies, run dfi_image.m with all parameters set accordingly
 
-_To read in _
-
-**Where users can get help with your project**
+## Help, Authorship & Licence
 contact current maintainer via github.io/HartharnSam , email: s.hartharn-evans2@ncl.ac.uk , twitter @HartharnSam
 
 Project created by Sam Hartharn-Evans, but most code is contributed from other authors, including J.K.Sveen@damtp.cam.ac.uk (digiflow_read), Peter Sutherland (dissipation toolbox), Marek Stastna, Magda Carr, and the DJLES toolbox is Dunphy et al. (2011).
@@ -33,10 +33,10 @@ This package is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 See <https://www.gnu.org/licenses/>.
 
+## Users will also need
+- [subaxis.m package](https://www.mathworks.com/matlabcentral/fileexchange/3696-subaxis-subplot)
 
-**Users will also need**
-subaxis.m package from https://www.mathworks.com/matlabcentral/fileexchange/3696-subaxis-subplot
-
+\/ a lot of this may be out of date, but left for any value it has in lieu of the time to update it
 
 Files:
     PROGRAMMES: 

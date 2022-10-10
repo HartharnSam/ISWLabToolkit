@@ -1,0 +1,85 @@
+# File: C:\Users\samha\OneDrive - Newcastle University\02_PhD_Project\02_Ice_Covered_Waters\02_Raw_data\CameraData\dft_example\ptv_export.dfc
+# dfcConsole
+#-----------------------------#
+# Execute all
+# Date: Fri Apr  9 16:35:59 2021
+# Build date: 07 April 2020
+################################
+# Reads in .dft files output by DigiFlow Particle Tracking Velocimetry and 
+# outputs a pair of text files per time stepcontaining the info contained
+# in the .dft file
+# 
+ptvFile := "particles_####.dft";  # PTV data file name
+det := read_image_details(ptvFile);
+# Open ptv file
+# Set up graphics
+len := 10; # Length of tracks
+det := read_image_details(ptvFile);
+pMax := 50;
+pixSize := 1;
+wMax := pMax*pixSize;
+zMax := pixSize*(det.ny-1);
+
+hP:= ptv_open(ptvFile, coordSystem:="(pixel)");
+basic_filename:="ptv_basic_####.txt";
+complex_filename:="ptv_full_####.txt";
+for fNow:=det.fFirst to det.fLast { # For loop over each timestep
+## The easy bit to add in
+      ptv := ptv_velocity(fNow,5); # Outputs [x y u v uniqueID] * n if (list[j].idTrack = idTrack) 
+      ##The integer part of this number, with leading appropriate, replaces the hash characters in string
+      fN := open_file(replace_hashes(basic_filename, fNow));
+	write_file(fN,["y    x    u    v    ID"], new_line); # note x, y reversed due to recording directions
+	write_array(fN, ptv);
+	close_file(fN);
+### Write the more complex bit
+
+	part := ptv_read_particles(ptvFile, fNow);
+	ptvArray := make_array(0, 29,  y_size(ptv));
+	
+	for iD:=0 to y_size(ptv)-1 { # Run through each particle
+		id := int(ptv[4, iD]);
+		partI:= ptv_particle_details(part, id); # Pull out the particle's data from part
+
+		ptvArray[0, iD] := partI.startFrame;
+		ptvArray[1, iD] := partI.startIndex;
+		ptvArray[2, iD] := partI.endFrame;
+		ptvArray[3, iD] := partI.endIndex;
+		ptvArray[4, iD] := partI.y; # note x, y reversed due to recording directions
+		ptvArray[5, iD] := partI.x; # note x, y reversed due to recording directions
+		ptvArray[6, iD] := partI.iTo;
+		ptvArray[7, iD] := partI.iFrom;
+		ptvArray[8, iD] := partI.idTrack;
+		ptvArray[9, iD] := partI.volume;
+		ptvArray[10,iD] := partI.vXYCorrelation;
+		ptvArray[11,iD] := partI.vRMSSize.y;
+		ptvArray[12,iD] := partI.vRMSSize.x;
+		ptvArray[13,iD] := partI.area;
+		ptvArray[14,iD] := partI.aXYCorrelation;
+		ptvArray[15,iD] := partI.aRMSSize.y;
+		ptvArray[16,iD] := partI.aRMSSize.x;
+		ptvArray[17,iD] := partI.box.yMin;
+		ptvArray[18,iD] := partI.box.yMax; 
+		ptvArray[19,iD] := partI.box.xMin;
+		ptvArray[20,iD] := partI.box.xMax;
+		ptvArray[21,iD] := partI.predictNext.y; 
+		ptvArray[22,iD] := partI.predictNext.x;
+		ptvArray[23,iD] := partI.mismatch.y;
+		ptvArray[24,iD] := partI.mismatch.x;
+		ptvArray[25,iD] := partI.nEdgePoints;
+		ptvArray[26,iD] := partI.sleeping;
+		ptvArray[27,iD] := partI.threshold;
+		ptvArray[28,iD] := partI.reject;
+		#ptvArray[29,iD] := partI.smallFaint; #Commented due to boolean
+
+	};
+	fNt:=open_file(replace_hashes(complex_filename, fNow));
+	fileheader:="startFrame  startIndex  endFrame  endIndex  x  y  iTo  iFrom  idTrack  volume  vXYCorrelation vRMSSizex   vRMSSizeyy   area  aXYCorrelation  aRMSSizex   aRMSSizey  boxxMin  boxxMax  boxyMin  boxyMax  predictNextx  predictNexty  mismatchx  mismatchy  nEdgePoints  sleeping  threshold  reject";
+	write_file(fNt, fileheader, new_line);
+	write_array(fNt,  ptvArray);
+       close_file(fNt);
+};
+
+ptv_close();
+
+
+
