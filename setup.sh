@@ -53,8 +53,8 @@ printf "\nset_date is set to '$set_date'. \n"
 ### Directory Structure inputted as fixed parameters
 D_CamDir=$(pwd)
 D_ProbeDir=$(pwd)/../Probe_Data
-OD_CamDir="/mnt/c/Users/b5006861/OneDrive - Newcastle University/02_PhD_Project/02_Ice_Covered_Waters/02_Raw_data/CameraData/"
-OD_ScriptsDir="/mnt/c/Users/b5006861/OneDrive - Newcastle University/02_PhD_Project/02_Ice_Covered_Waters/03_Code/03_LabPlotting/"
+OD_CamDir="/c/Users/b5006861/OneDrive - Newcastle University/02_PhD_Project/04_Ice_Covered_Waters/02_Raw_data/01_CameraData/"
+OD_ScriptsDir="/c/Users/b5006861/OneDrive - Newcastle University/02_PhD_Project/04_Ice_Covered_Waters/03_Code/01_LabPlotting/"
 
 ### Collate filenames
 ### Define target directories based on 'run_number' and 'set_date'.

@@ -19,10 +19,7 @@ char ansCh; //  Character for further Serial Monitor communication
 int newFileNumber; // File number for recording data.
 File root; // Address which tells where to write the data and where to read it from.
 const int numBits = 12;
-long readingOne = 0; // Variable which keeps a running total of the analogue read outputs
-long readingTwo = 0;
-long readingThree = 0;
-int ii = 0;
+
 // Define variables for On/Off button operation
 const int buttonPin = 2; // number for the pushbutton input pin
 int buttonState = 0; // variable for reading the current pushbutton status
@@ -54,82 +51,106 @@ void setup() { // Setup code to run once only
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void loop() {
-  if (Serial.available()) { // checking if the user typed a character.
-    ch = Serial.read(); // Reading the input.
+  buttonState = digitalRead(buttonPin);
+  // if button pressed down, and recording false
+  if ((buttonState != lastButtonState) && (buttonState == HIGH) && (recording == false)) {
+    lastButtonState = buttonState;
+    
+    Serial.println("Starting to record...");
+    newFileNumber++; // Increase the number of files by one.
+    deletedCurrentFile = false; // Changing the deletedCurrentFile switch, so that there is an opportunity to delete the recorded file later.
+    File newFile = SD.open("/DATA/D" + String(newFileNumber) + ".txt", FILE_WRITE); // Opening file for recording data.
+    analogReadResolution(numBits); // Allowing analog inputs to use 12 bits to store analog input, instead of 10 bits default.
+    newFile.println("---"); // Read off the potentiometer values and save to SD file.
 
-    // Case R - recording.
+    Serial.println("Recording the data.");
+    recording = true; // Changing the recording switch into recording mode.
+    buttonState = digitalRead(buttonPin);
 
-    if (ch == 'r' || ch == 'R') {
-      Serial.println("Starting to record...");
-      newFileNumber++; // increase the number of files by one
-      deletedCurrentFile = false; // change deletedCurrentFile switch for the opportunity to delete the recorded file later.
-      recording = true; // Change the recording switch
-      File newFile = SD.open("/DATA/D" + String(newFileNumber) + ".txt", FILE_WRITE); // Opening file for recording data.
-      analogReadResolution(numBits); // Allowing analog inputs to use 12 bits to store analog input, instead of 10 bits default.
-      Serial.println("Recording the data");
+    while (recording) { // While we are recording…
+      if (newFile) { // If the new file was opened successfully…
+        newFile.print(analogRead(A0) / pow(2, numBits) * 3.3, 6); // Read off the potentiometer values and save to SD file.
 
-      while (recording) {
-        if (newFile) {
-          buttonState = digitalRead(buttonPin);
-          if (buttonState == HIGH) {
-            for (int i = 0; i <= 100; i++) {
-              readingOne += analogRead(A0); // Read off the potentiometer values and add to the storing variable
-              delay(2);// Put a 2ms delay to increase the accuracy of readings.
-              readingTwo += analogRead(A1);
-              delay(2);
-              readingThree += analogRead(A2);
-              delay(2);
-              ii++;
+        // Repeat for probes (copy and paste below 3 lines as required with A# changed on each probe added)
+        delay(2); // Put a 2ms delay to increase the accuracy of readings.
+        newFile.print(","); // Print the tab separation for the file to me more readable.
+        newFile.print(analogRead(A1) / pow(2, numBits) * 3.3, 6); // Read off first probe value and save to SD file (6 decimal places)
+
+        delay(2); // Put a 2ms delay to increase the accuracy of readings.
+        newFile.print(","); // Print the tab separation for the file to me more readable.
+        newFile.print(analogRead(A2) / pow(2, numBits) * 3.3, 6); // Read off first probe value and save to SD file (6 decimal places)
+        delay(2); // Put a 2ms delay to increase the accuracy of readings.
+
+        // Finish off each line ready for next iteration
+        newFile.println(","); // Print tab and new line seperator for SD file
+
+
+        // Check Button Status again
+        buttonState = digitalRead(buttonPin);
+        // Check for two scenarios where button status changed (other scenarios represent no change, and continue the loop)
+        if ((buttonState != lastButtonState) && (buttonState == LOW)) { // When button is un-pressed, switch lastButtonState and continue loop
+          lastButtonState = buttonState;
+        }
+        else if ((buttonState != lastButtonState) && (buttonState == HIGH)) { // when button is pressed after being un-pressed, stop recording
+          recording = false; // change recording switch
+          newFile.close(); // close file with recorded data
+          lastButtonState = buttonState; // reset button state
+          Serial.println("Done Recording"); // display end message
+          File newFile = SD.open("/DATA/D" + String(newFileNumber) + ".txt"); // Open the file to read data from.
+          if (newFile) { // If file opened successfully…
+            while (newFile.available()) { // Run a loop until all strings are displayed or the showingData switch is changed.
+              Serial.write(newFile.read()); // Display the data on the serial monitor.
+              ansCh = Serial.read(); // Reading Serial Monitor input.
             }
-            newFile.print(readingOne * 3.3 / (ii * pow(2, numBits)), 6); // Average the potentiometer values and save to SD file.
-            newFile.print(","); // Print the tab separation for the file to me more readable.
-            newFile.print(readingTwo * 3.3 / (ii * pow(2, numBits)), 6); // Average the potentiometer values and save to SD file.
-            newFile.print(","); // Print the tab separation for the file to me more readable.
-            newFile.print(readingThree * 3.3 / (ii * pow(2, numBits)), 6); // Average the potentiometer values and save to SD file.
-            // Finish off each line ready for next iteration
-            newFile.println(","); // Print tab and new line seperator for SD file
-            Serial.println("Recorded");
-            readingOne = 0;
-            readingTwo = 0;
-            readingThree = 0;
-            ii = 0;
-            delay(200); // Lets me unpress the button!
+            Serial.print("Done.");
+            newFile.close(); // Close the file.
           }
 
-          ansCh = Serial.read(); // Reading Serial Monitor input
-          if (ansCh == 's' || ansCh == 'S') {// if the user inputs S to stop...
-            recording = false; // change the recording switch.
-            newFile.close(); // close file with recorded data.
-            Serial.println("Done recording!"); // display message
-          }
         }
       }
+      else { // if new file couldn't open, display error
+        Serial.println("Error opening file.");
+      }
     }
+    delay(500); // Delay .5 seconds for stability
+    // Reset variables
+    buttonState = 0;
+    lastButtonState = buttonState;
+    recording = false;
+    delay(500);
+  }
+
+  //
+  // Look at other functions requiring Serial Monitor Input
+  //
+
+  if (Serial.available()) {
+    ch = Serial.read(); // Read the serial monitor input
+    //Case P - printing the file that has been just recorded.
     if (ch == 'P' || ch == 'p') {
-      if (newFileNumber > numberOfFiles) { // if no files have been recorded this session...
-        if (!deletedCurrentFile) { // if the file hasn't been deleted...
-          showingData = true;
-          Serial.println("Showing the data that has just been recorded.");
-          File newFile = SD.open("/DATA/D" + String(newFileNumber) + ".txt"); // open the file to read data from.
-          if (newFile) { // if file opened successfully...
-            while (newFile.available() && showingData) { // run loop until all strings displayed, or showingData switch changed.
-              Serial.write(newFile.read()); // Display the data on serial monitor
-              ansCh = Serial.read(); // Reading Serial Monitor input
-              if (ansCh == 's' || ansCh == 'S') {// If user uses S to stop process
-                showingData = false;
-                Serial.print("\nStopped showing data.\n");
+      if (newFileNumber > numberOfFiles) { // If there are any files that were recorded during this session…
+        if (!deletedCurrentFile) { // If the file has not been deleted…
+          showingData = true; // Change the showingData switch.
+          Serial.println("Showing the data that has been just recorded. ");
+          File newFile = SD.open("/DATA/D" + String(newFileNumber) + ".txt"); // Open the file to read data from.
+          if (newFile) { // If file opened successfully…
+            while (newFile.available() && showingData) { // Run a loop until all strings are displayed or the showingData switch is changed.
+              Serial.write(newFile.read()); // Display the data on the serial monitor.
+              ansCh = Serial.read(); // Reading Serial Monitor input.
+              if (ansCh == 's' || ansCh == 'S') {// If user uses S to stop the displaying process…
+                showingData = false; // Set the displaying switch to false.
+                Serial.print("\nStopped showing the data.\n");
               }
             }
             Serial.print("Done.");
-            newFile.close();
+            newFile.close(); // Close the file.
           }
           else Serial.println("Error opening file.");
         }
-        else Serial.println("Cannot print the file, you have deleted D" + String(newFileNumber + 1) + ".txt.");
+        else Serial.println("Cannot print the file. You have deleted D" + String(newFileNumber + 1) + ".txt."); // If deletedCurrentFile is true, print an error message.
       }
-      else Serial.println("Cannot print the file. No files recorded this session");
+      else Serial.println("Cannot print the file. No files have been recorded during this session."); // If no files were recorded in this session, print an error message.
     }
-
 
     //Case D - deleting the file that has been just recorded.
     if (ch == 'd' || ch == 'D') {
