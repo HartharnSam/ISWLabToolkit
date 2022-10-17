@@ -1,22 +1,21 @@
-function [grd, e_dir, II, ok_comp] = calculate_dissipation(piv_dir, piv_fname, image_dir, image_fname, win_size, k_fit_range, nu, ice_props, diagnostic)
-%CALCULATE_DISSIPATION - Calculates TKE (x, y) planes and plots images
+function [grd, e_dir, ok_comp] = calc_dissipation(piv_dir, piv_fname, win_size, nu)
+%CALC_DISSIPATION - Calculates TKE (x, y) planes and plots images
 %Using Doran et al., 2001 method to calculate firstly direct dissipation
 %rate estimation, and then spectral estimate of the same. Carries out
 %pre-processing of input PIV .dfi file, to remove edges, identify the
 %pycnocline and ice edge.
 %
 % INPUTS:
-%   piv_file - Single .dfi file
-%   image_file - A corresponding raw image file .dfi
-%   diagnostic - switch to plot, or not plot diagnostics
-%   parameters - ordered list of the plots to make
-%   x_lim, y_lim - x and y limits
-%   im_ice_threshold - Threshold for brightness attributed to "Ice" (value
-%                       out of 255)
-%   ice_thickness - % Max thickness of ice from surface
-%   win_size -  Size of dissipation calculation window (in pixels)
-%   k_fit_range - Range [rad/m] over which to fit energy spectra for TKE dissipation calculation
+%   piv_dir - Directory for piv file
+%   piv_fname - Single .dfi filename
+%   win_size -  Size of dissipation calculation window (in pixels) [Default
+%   = 64]
 %   nu - Kinematic viscosity
+%
+% OUTPUTS:
+%   grd - Structure containing calculated dissipation, and relevant grids
+%   e_dir - Another structure containing output dissipation info and grids
+%   ok_comp - boolean ok calculation matrix
 %
 % Other m-files required: dfireadvel, dfi_grid_read, cmocean,
 % find_boundaries, dissipation_gradient_2D, subaxis, spec2_ps_nopad,
@@ -34,20 +33,15 @@ function [grd, e_dir, II, ok_comp] = calculate_dissipation(piv_dir, piv_fname, i
 % -----------------------------
 %% Set any defaults
 % -----------------------------
-if nargin < 5 
+if nargin < 3 
     win_size = 64; %Size of dissipation's PIV window
 end
-if nargin < 6
-    k_fit_range = [300 800]; %Range [rad/m] over which to fit energy spectra for TKE dissipation alculation
-end
-if nargin < 7
+if nargin < 4
     nu = 1.7E-6; % Kinematic viscosity
 end
-
-if nargin < 9 
-    diagnostic = false;
+if nargin < 5
+    k_fit_range = [300 800]; %Range [rad/m] over which to fit energy spectra for TKE dissipation alculation
 end
-
 %--------------------------------------------------
 %%  END USER INPUTS
 % -------------------------------------------------
@@ -82,6 +76,11 @@ V(1:3,:) = NaN; V((end-2):end,:) = NaN; V(:,1:3) = NaN; V(:,(end-2):end) = NaN;
 
 [m,n] = size(U);
 
+%% Calculate relevant frequencies/wavenumbers
+%dx = abs(im.xWorldPerPixel); dy = abs(im.yWorldPerPixel);
+%f_nyq = pi*dx;
+%Lx = abs(im.nx*im.xWorldPerPixel);
+%k_fit_range = [2*pi/Lx 1/f_nyq];
 
 %% Make the windowed grid
 grd.x_pix = 3 + (win_size/2):(win_size/4):(n-win_size/2); % overlapping grid, offset from edge by 3

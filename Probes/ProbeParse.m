@@ -1,7 +1,7 @@
 % Routine for comparing the initial density profiles of each probe.
 % Uses hydrometer readings to calibrate the probes
 clearvars; close all; clc;
-addpath('C:\Users\b5006861\OneDrive - Newcastle University\02_PhD_Project\01_PhD_Organisation\04_LaboratorySetup\01_SourceCodes\Current\probe_read');
+addpath('D:\OneDrive - Newcastle University\02_PhD_Project\04_Ice_Covered_Waters\03_Code\ISWLab_Toolkit\Probes\probe_read');
 
 %% user inputs
 input_filename = 'D10.TXT';

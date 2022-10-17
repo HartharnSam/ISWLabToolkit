@@ -377,6 +377,9 @@ if nargout==0
     % Here we draw the image in a figure window if no output is
     % specified. We need to treat single plane images, velocity-fields
     % and multi-plane images separatly.
+    if ~isfield(p, 'caxis')
+        p.caxis = [0 255];
+    end
     disp('Opening figure to display contents....')
     if size(p.cdata,3)==1
         imagesc(p.cdata), caxis([p.caxis])

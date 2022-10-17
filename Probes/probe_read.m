@@ -1,55 +1,53 @@
 function [raw_data, fitted_data, outputs] = probe_read(input_filename, travel, total_depth, density_lims, cut, probes, depth_shift, pot_top_height, calibrated)
-
-%PROBE_READ - % Routine for comparing the initial density profiles of each probe.
-%Function which takes in arguments from physical readings, to output the 
+%PROBE_READ - Routine for comparing the initial density profiles of each probe.
+%Function which takes in arguments from physical readings, to output the
 %stratification in the tank. Uses hydrometer readings to calibrate the probes
-%Optional file header info (to give more details about the function than in the H1 line)
-%Optional file header info (to give more details about the function than in the H1 line)
 %
-% Syntax:  [raw_data, fitted_data, gridded_fit] = probe_read(input1,input2,input3)
+% Syntax:  [raw_data, fitted_data, gridded_fit] = probe_read(input_filename, travel, total_depth, density_lims, cut, probes, depth_shift, pot_top_height, calibrated)
 %
 % Inputs:
 %    input_filename - Name of file within current directory containing raw
-%    probe data (in text format)
+%    probe data (in text/csv format)
 %
-%    travel - Description
-%    total_depth - Description
-%    density_lims - Desc
-%    density_bot - Desc
-%    cut - Desc
-%
+%    travel - Total travel of potentiometer
+%    total_depth - Total water depth
+%    density_lims - [Lower layer density; upper layer density]
+%    cut - Number of points to cut from [top bottom] of profile
+%    probes - list of channels that probe data is on (e.g. [2 3])
+%    depth_shift - some pointwise depth correction
+%    pot_top_height - Probe height at top reading (usually = total_depth)
+%    calibrated - [optional, default false] switch for using a known calibration of potentiometer
+%    readings to height above bed
 %
 % Outputs:
-%    output1 - Description
-%    output2 - Description
-%
-% Example:
-%    Line 1 of example
-%    Line 2 of example
-%    Line 3 of example
+%    raw_data - copy of unprocessed probe data
+%    fitted_data - copy of the data in height above bed, density format
+%    outputs - a structure containing information about the profile (e.g.
+%    pycnocline thickness)
 %
 % Other m-files required: none
 % Subfunctions: none
 % MAT-files required: none
 %
-
 %---------------------------------------------------
 %% BEGIN CODE %%
-%---------------------------------------------------
+%--------------------------------------------------
+% Load in probe data
 inputs = importdata(input_filename);
 if contains(input_filename, '.csv')
     inputs = inputs.data;
 end
+% Parse function inputs
 if nargin < 9
-    calibrated = false; 
+    calibrated = false;
 end
-%% 
+
 density_top = density_lims(1);
 density_bot = density_lims(2);
+
 %% Average top and bottom readings
-% (user need not make changes below this line)
 % Number of points and channels in probe reading
-   Input = inputs;
+Input = inputs;
 %Input(:, 1) = sgolayfilt(Input(:, 1),1,5);
 
 % Number of points and channels in probe reading
@@ -91,11 +89,11 @@ else
     %phys(:, 1) = ....
 end
 
-% remove points from top or bottom 
+% remove points from top or bottom
 cut_top = cut(1);
 cut_bot = cut(2);
 if cut_top > 0 || cut_bot > 0
-    
+
     N_new = N_points - cut(1) - cut(2);       % New number of points
     new_top_avg = mean(phys(cut_top+1:cut_top+N_avg+1, :));                 % average of correct top section
     new_bot_avg = mean(phys(N_points-cut_bot-N_avg+1:N_points-cut_bot, :)); % average of correct bottom section
@@ -103,7 +101,7 @@ if cut_top > 0 || cut_bot > 0
     % replicate onto a matrix for the new conversion
     new_top_avg_mat  = repmat(new_top_avg, N_new,1);
     new_avg_diff_mat = repmat(new_avg_diff,N_new,1);
-    
+
     % do new conversion to fix incorrect edges
     new_input = phys(cut_top+1:N_points-cut_bot, :);
     phys         = density_top + (new_input - new_top_avg_mat)./new_avg_diff_mat*den_diff;
@@ -141,7 +139,7 @@ bot_edge = density_bot - fit_perc*den_diff; % bottom edge of density fit
 ii=1;
 fit_top = zeros(1,length(probes));
 fit_bot = fit_top;
-fit_mid = fit_top; 
+fit_mid = fit_top;
 rho_mid = fit_top;
 
 tanh_fit = zeros(2,length(probes));
@@ -158,7 +156,7 @@ for probe = probes
     [p,~] = polyfit(phys(inds,probe), phys(inds,1), 1);
     % add to plot
     rho_line = linspace(density_top, den_avg, N_points);
-    plot(rho_line, p(1)*rho_line + p(2), 'Color', clr(ii))
+    %plot(rho_line, p(1)*rho_line + p(2),'--', 'Color', clr(ii));
 
     % locations of edges of pycnoclines
     fit_top(ii) = p(1)*density_top + p(2);
@@ -167,13 +165,15 @@ for probe = probes
     % location of pycnocline centres from density readings
     [~, rho_mid_ind] = min(abs(phys(:,probe) - den_avg));
     rho_mid(ii) = phys(rho_mid_ind,1);
-    
+
     % do hyperbolic tangent fit (or fit with the error function)
     func = @(param, z) den_avg - den_diff/2*tanh((z-param(1))/param(2));
     %func = @(param, z) den_avg - den_diff/2*erf((z-param(1))/param(2));
     param = [rho_mid(ii) (rho_mid(ii)-fit_bot(ii))];    % initial guess
-    tanh_fit(:,ii) = lsqcurvefit(func, param, phys(:,1), phys(:,probe));
-        
+    tanh_lb = [0 0]; tanh_ub = [total_depth total_depth]; % Set physical bounds for the pycnocline width and depths as total water depth
+    tanh_fit(:,ii) = lsqcurvefit(func, param, phys(:,1), phys(:,probe), tanh_lb, tanh_ub);
+    plot(func(tanh_fit(:, ii), phys(:,4)), phys(:,4), ':', 'Color', clr(ii), ...
+        'DisplayName',num2str(probes(ii)'-1, 'tanh %-d'));
     ii=ii+1;
 end
 

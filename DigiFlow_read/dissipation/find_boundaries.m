@@ -1,11 +1,16 @@
-function II = find_boundaries(image_fname, type, diagnostic, ice_thickness, im_ice_threshold, II)
+function II = find_boundaries(image_fname, type, ice_thickness, im_ice_threshold, diagnostic)
 %FIND_BOUNDARIES - Using brightness of the raw image, identifies the location
 % of the pycnocline or ice edge
 %
+% Syntax:  II = find_boundaries(image_fname, type, ice_thickness, im_ice_threshold, diagnostic)
+%
 % Inputs:
-%    input1 - Description
-%    input2 - Description
-%    input3 - Description
+%    image_fname - Filename of raw image (String)
+%    type - "ice" or "pycnocline" - boundary to be detected
+%    ice_thickness - greatest depth (from top) where ice could be antipated
+%    [default = 0.5]
+%    im_ice_threshold - brightness threshold value for ice [default = 100]
+%    diagnostic -  switch for image diagnostics
 %
 % Outputs:
 %    II - Structure containing:
@@ -17,7 +22,7 @@ function II = find_boundaries(image_fname, type, diagnostic, ice_thickness, im_i
 %           - II.qpy / II.qpx - Region bounded by ice/upper boundary
 %           - II.y_shallow_peak or II.y_deep_peak - image used for peak
 %           detection
-
+%
 % Other m-files required: dfireadvel, cmocean, newbluewhitered, plot_dfi,
 % subaxis
 % Subfunctions: none
@@ -31,16 +36,16 @@ function II = find_boundaries(image_fname, type, diagnostic, ice_thickness, im_i
 % MATLAB Version: 9.4.0.813654 (R2018a)
 %
 %% Check args in
-if nargin < 3
-    diagnostic = false;
-end
-if nargin < 4 || (isempty(ice_thickness) && strcmpi(type, 'ice'))
+
+if nargin < 3 || (isempty(ice_thickness) && strcmpi(type, 'ice'))
     ice_thickness = .05;
 end
-if nargin < 5 || (isempty(im_ice_threshold) && strcmpi(type, 'ice'))
+if nargin < 4 || (isempty(im_ice_threshold) && strcmpi(type, 'ice'))
     ice_thickness = 100;
 end
-
+if nargin < 5
+    diagnostic = false;
+end
 
 %% Read in the "image"
 II.og = dfireadvel(fullfile(image_fname));

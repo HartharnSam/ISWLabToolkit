@@ -1,37 +1,32 @@
 function fig = plot_dissipation(parameters, settings, grd, e_dir, II, ice_lines)
-%PLOT_DISSIPATION - Make some plots 
+%PLOT_DISSIPATION - Make some plots of input dissipation, calcualted by
+%calc_dissipation
 %
-% Syntax:  [output1,output2] = function_name(input1,input2,input3)
+% Syntax:  fig = plot_dissipation(parameters,settings,grd, e_dir, II, ice_lines)
 %
 % Inputs:
 %    parameters - 
 %    settings - structure containing plot settings (y_lim, x_lim,
 %    diss_lim, image_dir, image_file)
-%    grd - grd output by calculate_dissipation
-%    e_dir - 
-%    II -
-%    ice_lines - 
+%    grd - grd output by calc_dissipation
+%    e_dir - e_dir output by calc_dissipation
+%    II - Structure identifying boundaries, as produced by find_boundaries
+%    ice_lines - switch of which plots to add in ice masking to
 %   
 % Outputs:
-%    output1 - Description
-%    output2 - Description
-%
-% Example:
-%    Line 1 of example
-%    Line 2 of example
-%    Line 3 of example
+%    fig - Figure handle for plotted figure
 %
 % Other m-files required: cmocean, dfireadvel, newbluewhitered, plot_dfi, subaxis
 % Subfunctions: none
 % MAT-files required: none
 %
-% See also: RUN_DISSIPATION,  CALCULATE_DISSIPATION
+% See also: RUN_DISSIPATION,  CALC_DISSIPATION
 % Author: Sam Hartharn-Evans, from Peter Sutherland's scripts
 % School of Mathematics, Statistics and Physics, Newcastle University
 % email address: s.hartharn-evans2@newcastle.ac.uk
 % GitHub: https://github.com/HartharnSam
-% 21-Sep-2021; Last revision: 21-Sep-2021
-% MATLAB Version: 9.4.0.813654 (R2018a)
+% 21-Sep-2021; Last revision: 21-Oct-2022
+% MATLAB Version: 9.12.0.2009381 (R2022a) Update 4
 
 set(0,'defaultAxesFontSize',12)
 set(0,'defaultAxesLineWidth',1.0)

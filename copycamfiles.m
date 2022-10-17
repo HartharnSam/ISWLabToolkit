@@ -45,7 +45,7 @@ curr_CamName = list_CamNames{curr_CompNumber};
 
 % Set the Directories
 D_CamDir = 'D:\Sam\IceCovWaters\Camera_Data\';
-OD_CamDir = 'C:\Users\b5006861\OneDrive - Newcastle University\02_PhD_Project\04_Ice_Covered_Waters\02_Raw_data\CameraData\';
+OD_CamDir = 'C:\Users\b5006861\OneDrive - Newcastle University\02_PhD_Project\04_Ice_Covered_Waters\02_Raw_data\01_CameraData\';
 
 % Change folder if the second run of day
 if run_number == 2
@@ -93,18 +93,18 @@ end
 %% Copy PTV data if required
 if curr_CompNumber == 3
     % Copy raw DigiFlow (.txt) output
-    copyfile([orig_cam_dir, '\ptv_*.txt'], new_cam_dir);
-    copyfile([orig_cam_dir, '\particles.dfd'], new_cam_dir);
+%    copyfile([orig_cam_dir, '\ptv_*.txt'], new_cam_dir);
+%    copyfile([orig_cam_dir, '\particles.dfd'], new_cam_dir);
     
     % Then do the .mat file output too
     if isReprocess || (exist([new_cam_dir, '/ptv_tracks.mat'])~=2)
-        particle_tracks(orig_cam_dir);
+     %   particle_tracks(orig_cam_dir);
     end
     try
         copyfile([orig_cam_dir, '\ptv_tracks.mat'], new_cam_dir);
         disp('PTV Files Copied')
     catch
-        copyfile([orig_cam_dir, '\ptv_*.dfi'], new_cam_dir);
+%        copyfile([orig_cam_dir, '\ptv_*.dfi'], new_cam_dir);
         try
             outputs = ls([orig_cam_dir, '\ptv_*.dfi']);
             im = dfireadvel([orig_cam_dir,'\', outputs(1, :)]);
