@@ -48,7 +48,11 @@ end
 axes(ax)
 %% Read in File
 im = cell(length(fnm_in), 1);
-%x = cell(length(fnm_in), 1); y = cell(length(fnm_in), 1);
+if ~exist('grid', 'var') || length(grid) < length(fnm_in) || isempty(grid{1})
+    x = cell(length(fnm_in), 1); y = cell(length(fnm_in), 1);
+    X = x; Y = y; 
+    x2 = x; y2  = y;
+end
 
 for ii = 1:length(fnm_in)
     if iscell(fnm_in)
@@ -199,7 +203,7 @@ switch lower(BackgroundType)
            
         end
         imagesc(ax, x{1}, y{1}, BG_data) % Plot parameter as colour plot
-        try
+        try %#ok<TRYNC> 
             caxis(im{1}.caxis')
         end
         
@@ -227,7 +231,7 @@ switch lower(BackgroundType)
         caxis(ax, [0 .15])
         colormap(ax, cmocean('speed'));
         c = colorbar;
-        ylabel(c, ['$ |u, v| (ms^{-1})$'], 'interpreter' , 'latex')
+        ylabel(c, '$ |u, v| (ms^{-1})$', 'interpreter' , 'latex')
     case 'dissipation'
         U = im{1}.cdata(:, :, 1); V = im{1}.cdata(:, :, 2);
         [~, BG_data] = dissipation_gradient_2D(U, V, grid{1}.dx, grid{1}.dy);
@@ -306,11 +310,11 @@ end
 hold off
 %% Vorticity Stats
 if nargout >  3
-    Stats.MaxVorticity = max(data, [], 'all'); % Maximum
-    Stats.MinVorticity = min(data, [], 'all'); % Minimum
-    [Stats.MaxAbsVorticity] = max(abs(data(:))); % Maximum absolute vorticity
-    Stats.MinAbsVorticity = min(abs(data(:)));
-    [ind, ~] = find(data==Stats.MaxAbsVorticity | data==-Stats.MaxAbsVorticity); % x location of max abs vorticity
+    Stats.MaxVorticity = max(BG_data, [], 'all'); % Maximum
+    Stats.MinVorticity = min(BG_data, [], 'all'); % Minimum
+    [Stats.MaxAbsVorticity] = max(abs(BG_data(:))); % Maximum absolute vorticity
+    Stats.MinAbsVorticity = min(abs(BG_data(:)));
+    [ind, ~] = find(BG_data==Stats.MaxAbsVorticity | BG_data==-Stats.MaxAbsVorticity); % x location of max abs vorticity
     Stats.LocMaxVorticity = grid.xi(ind);
     
     %% Horizontal Velocity Stats

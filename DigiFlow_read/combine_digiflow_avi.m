@@ -54,7 +54,8 @@ v = cell(1, 2);
 NumFrames = nan(1, n_cameras);
 end_times = nan(n_cameras, 1);
 for i = 1:n_cameras
-    v{i} = VideoReader([cameras_list(i).folder, '\',cameras_list(i).name, '\', run_name, '.avi']); % Load clips to access stats
+    v{i} = VideoReader([cameras_list(i).folder, '\',cameras_list(i).name, '\', run_name, '.avi']); %#ok<TNMLP> % Load clips to access stats %#ok<%>
+
     if isfield(v{i}, 'NumFrames')
         NumFrames(i) = v{i}.NumFrames; % If possible load number of frames directly
     else
@@ -82,7 +83,7 @@ for i = 1:n_cameras
         frame_temp = im2gray(read(v{1, i}, sequence(i, 1))); % load frame into temporary holder
         
         n2x(i, :) = size(frame_temp);
-        R(i) = imref2d(n2x(i, :), -x(i, :), y(i, [2 1]));
+        R(i) = imref2d(n2x(i, :), -x(i, :), y(i, [2 1])); %#ok<AGROW> 
     end
     
     x2s(i,1:n2x(i))= linspace(x0(i), x(i, 2), n2x(i));
@@ -145,8 +146,8 @@ for i = 1:length_combined
         frame_ind = sequence(2, i);
         frame = im2gray(read(v{1, 2}, frame_ind))*intensity_ratio(2);
         frame_RGBB = ind2rgb(frame, singlecycle);
-    C = imfuse(frame_RGBA, R(1), frame_RGBB, R(2), ...
-        'blend', 'Scaling', 'none');
+        imfuse(frame_RGBA, R(1), frame_RGBB, R(2), ...
+            'blend', 'Scaling', 'none');
     end
     
     writeVideo(vi, f);

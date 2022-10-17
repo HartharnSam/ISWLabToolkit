@@ -13,7 +13,7 @@ clc; clearvars; close all;
 
 %% User Set Variables
 % Input Files
-InputDirectory = [pwd, ;
+InputDirectory = pwd ;
 fnm(1) = "piv_####";          % Filename of generic PIV .dfi image
 fnm(2) = "output_####";
 m(1) = 597;                  % First frame number
@@ -59,11 +59,10 @@ if vertical_stack
     x_axis_labelled = n_panels; % Subplot number of axis for which time label will be labelled
     y_axis_labelled = 1:n_panels;
 else
-    ni = 1; mi = n_panels;
+    ni = 1; mi = n_panels; %#ok<UNRCH> 
     y_axis_labelled = 1;
     x_axis_labelled = 1:n_panels;
 end
-
 
 fig = figure;
 if strcmp(outputFileType, 'avi')
@@ -73,6 +72,7 @@ elseif strcmp(outputFileType, 'mp4')
 end
 
 %% Read in file
+Grids = cell(n_panels, 1);
 for t = 1:n
     for ii = 1:n_panels
         fnm_0 = fullfile(InputDirectory, join([fnm(ii), '.dfi'], ''));

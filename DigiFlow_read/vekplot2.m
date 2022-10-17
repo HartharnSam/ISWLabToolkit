@@ -19,7 +19,7 @@ if ischar(x)
     y=load(x);
 end 
 
-if nargin==2 | size(x,2)==4
+if nargin==2 || size(x,2)==4
     scale=y; clear y;
     y=x(:,2); u=x(:,3); v=x(:,4); x=x(:,1); 
 end
@@ -59,10 +59,10 @@ lvek2=lvek2./lengde .* spisslengde;
 pilx=[x1; x2; x2+lvek1(1,:); x2; x2+lvek2(1,:)];
 pily=[y1; y2; y2+lvek1(2,:); y2; y2+lvek2(2,:)];
 
-vecx=[x1; x2; repmat(NaN,size(x1))];
-vecy=[y1; y2; repmat(NaN,size(y1))];
-px=[x2+lvek1(1,:); x2; x2+lvek2(1,:); repmat(NaN,size(x1))];
-py=[y2+lvek1(2,:); y2; y2+lvek2(2,:); repmat(NaN,size(y1))];
+vecx=[x1; x2; NaN(size(x1))];
+vecy=[y1; y2; NaN(size(y1))];
+px=[x2+lvek1(1,:); x2; x2+lvek2(1,:); NaN(size(x1))];
+py=[y2+lvek1(2,:); y2; y2+lvek2(2,:); NaN(size(y1))];
 
 if nargin<6 || isempty(line)
     plot(vecx(:),vecy(:),'b-')
@@ -76,12 +76,12 @@ else
     %plot(pilx,pily,line)
 end
 
-if nargin==7 & ~isempty(mark)
+if nargin==7 && ~isempty(mark)
     hold on
     plot(x,y,mark);
 end
 
-if nargin==8 & ~isempty(fillcolor)
+if nargin==8 && ~isempty(fillcolor)
     hold on
     ha=plot(x,y,mark);
     set(ha,'markerFaceColor',fillcolor)

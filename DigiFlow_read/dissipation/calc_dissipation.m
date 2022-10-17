@@ -52,9 +52,7 @@ V = im.cdata(:,:,2);
 %vort = im.cdata(:,:,3);
 
 % Set world coordinates
-[x_range, y_range, dx, dy, nx, ny, x0, y0, x, y]  = dfi_grid_read(im);
-Grid = struct('x0', x0, 'y0', y0, 'dx', dx, 'dy', dy, 'nx', nx, 'ny', ny, ...
-    'x_range', x_range, 'y_range', y_range);
+[x_range, y_range, dx, dy, ~, ~, ~, ~, x, y]  = dfi_grid_read(im);
 
 % Re-allign matrix to correct orientation
 if dx > 0

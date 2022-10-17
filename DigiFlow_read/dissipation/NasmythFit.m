@@ -17,7 +17,7 @@ end
 if nargin < 3
     nu = 1.7E-6; % Kinematic viscosity
 end
-[nasmyth, universal] = NasmythSpectrum;
+[~, universal] = NasmythSpectrum;
 
 % Stop iterating at 1000 iterations
 opts = optimset('MaxIter',1000); % optimset(''Display','iter',TolFun',1E-10 )
@@ -33,6 +33,7 @@ if isPlot
     loglog(universal.kn,universal.F,'k');
     hold on;
     e_test = linspace(-10,1,100);
+    fc = NaN(1:length(e_test));
     for i = 1:length(e_test)
         fc(i) = nd_spec_diff(e_test(i),k,E11,universal);
     end

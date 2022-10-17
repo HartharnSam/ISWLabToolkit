@@ -1,4 +1,4 @@
-function map = singlecycle_doubleBrightness(m)
+function map = singlecycle_doublebrightness(m)
 %SINGLECYCLE - DigiFlow "single cycle - double brightness" color map
 %
 % Syntax:  singlecycle_doubleBrightness returns a colormap with the same number of colours

@@ -1,4 +1,4 @@
-function [h]=mstreamline(x,y,u,v,ds);
+function [h]=mstreamline(x,y,u,v,ds)
 % MSTREAMLINE - plot streamlines from velocity field
 %
 % h=mstreamline(x,y,u,v); attempts to plot the streamlines of a flow
@@ -27,7 +27,8 @@ if nargin==4
 end
 
 in=find(~isnan(u));
-
+yy = NaN(2, size(u, 1));
+xx = yy;
 for ii=1:size(u,1)
   ix = find(~isnan(u(ii, :)) & u(ii, :) ~= 0);
   if ~isempty(ix)

@@ -35,12 +35,12 @@ function [freq,sx,err_low_hi,dof] = spec_ps_nopad(data,sample_freq,n_breaks,win_
 % 27 Jan 2008 - Generally Works - NEEDS PROPER NORMALISATION
 % 18 Dec 2007 - NOT WORKING YET
 
-[m n] = size(data);
+[m, n] = size(data);
 f_nyq = sample_freq/2;
 
 if m==1&&n>1
     data = data';
-    [m n] = size(data);
+    [m, n] = size(data);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

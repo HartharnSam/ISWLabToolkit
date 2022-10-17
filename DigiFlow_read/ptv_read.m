@@ -93,13 +93,13 @@ if nargin < 3 || strcmpi(importtype, 'full') % Conditions to import full data
     
     for i = 1:height(ptvbasic)
         trackID = ptvbasic{i, 5};
-        ptv_loc = find(ptvfull.idTrack == trackID); %#ok
+        ptv_loc = ptvfull.idTrack == trackID;
         
         for j = 1:size(ptvfull, 2)
             if ptvfull.x(i) == 0 && ptvfull.y(i) == 0 % Checks for "fake particles"
-                eval(['ptv{trackID, 1}.', ptvfull.Properties.VariableNames{j}, ' = NaN;'])
+                ptv{trackID, 1}.(ptvfull.Properties.VariableNames{j}) = NaN;
             else
-                eval(['ptv{trackID, 1}.', ptvfull.Properties.VariableNames{j}, ' = ptvfull{ptv_loc, j};'])
+                ptv{trackID, 1}.(ptvfull.Properties.VariableNames{j}) = ptvfull{ptv_loc, j};
             end
             ptv{trackID, 1}.idTrack = trackID;
         end

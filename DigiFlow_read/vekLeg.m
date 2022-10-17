@@ -48,7 +48,7 @@ old_axesPos = f.Position; % Also record the revised position of the axis
                           % so that changes in this due to placement of 
                           % the legend can be retained
 delete(l); % Delete the legend again
-if ~strcmp(class(f.Parent), 'matlab.graphics.layout.TiledChartLayout')
+if isa((f.Parent), 'matlab.graphics.layout.TiledChartLayout')
     f.Position = old_axesPos; % Reposition main axes as if a legend had been placed there
 end
 
@@ -58,7 +58,7 @@ f_xunit_width = diff(f.XLim); % Width of plot in data units
 f_axes_width = f.InnerPosition(3); % Width of plot in figure units
 %xUnitChangeInFigure = f_xunit_width/f_axes_width; % Change in data units for 1 change in figure units
 DataToFigure = f_axes_width/f_xunit_width;
-FigureToData = f_xunit_width/f_axes_width; % 
+%FigureToData = f_xunit_width/f_axes_width; % 
 
 % Calculate required width of box
 t = text(6 , .15, strcat([num2str(arrow_value), ' m/s']), 'Horizontalalignment', 'center');
@@ -77,7 +77,7 @@ AxesXLim = [0 box_width_dataUnits]-(box_width_dataUnits-scale*arrow_value)/2; %s
 xlim(g, AxesXLim);
 ylim(g, [0 relative_height])
 delete(t);
-t = text(g, mean(AxesXLim) , relative_height/2, strcat([num2str(arrow_value), ' m/s']), 'Horizontalalignment', 'center');
+text(g, mean(AxesXLim) , relative_height/2, strcat([num2str(arrow_value), ' m/s']), 'Horizontalalignment', 'center');
 % Remove axis like formatting
 xticks([]); yticks([]); box on
 g.Position = [Position_leg(1), Position_leg(2), Position_leg(3), Position_leg(4)*.7];

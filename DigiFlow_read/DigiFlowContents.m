@@ -38,11 +38,11 @@ fprintf(['\n ------------------------ \n ' category ' \n -----------------------
 for i = 1:size(content, 1)
     part = content(i, :);
     [~, part] = fileparts(part);
-    string_chars = [string_chars part];
+    string_chars = [string_chars part]; %#ok<AGROW> 
     if mod(i-1, 4) == 1
-        string_chars = [string_chars ' \n '];
+        string_chars = [string_chars ' \n ']; %#ok<AGROW> 
     else
-        string_chars = [string_chars ' \t '];
+        string_chars = [string_chars ' \t ']; %#ok<AGROW> 
     end
 end
 string_chars = [string_chars ' \n '];

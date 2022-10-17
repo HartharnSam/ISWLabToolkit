@@ -1,4 +1,4 @@
-function map = singlecycle_halfBrightness(m)
+function map = singlecycle_halfbrightness(m)
 %SINGLECYCLE - DigiFlow "single cycle - half brightness" color map
 %
 % Syntax:  singlecycle_halfBrightness returns a colormap with the same number of colours

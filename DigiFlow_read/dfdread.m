@@ -64,14 +64,14 @@ for t = 1:size(DataStartEndInds, 1)
     p.DataInfo{t} = [particles.Main(DataStartInds(t)); particles.Main(MetaData_StartEndInds(t, 1):MetaData_StartEndInds(t, 2))];
 end
 %% Extract Documentation Info
+result = cell(length(Documentation), 1);
 for i = 1:length(Documentation)
     result{i} = regexp(Documentation{i}, '.(?<name>\w+) := (?<value>[^,]+);', 'names');
-    
 end
 result = result(~cellfun('isempty',result));
 
 for i = 1:length(result)
-    eval(['Documentations.', result{i}.name, '= result{i}.value;']);
+    Documentations.(result{i}.name) = result{i}.value;
 end
 p.Documentation = Documentations;
 clear result
@@ -89,7 +89,6 @@ end
 result = result(~cellfun('isempty',result));
 
 for i = 1:length(result)
-    eval(['DrawingInfos.', result{i}.name, ' = ', result{i}.value, ';']);
+    DrawingInfos.(result{i}.name) = result{i}.value;
 end
 p.DrawingInfo = DrawingInfos;
-

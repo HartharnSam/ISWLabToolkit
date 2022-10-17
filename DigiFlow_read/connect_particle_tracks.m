@@ -28,7 +28,7 @@ while continuing
     set(gcf, 'Position', [1221 376 560 420]);
     drawnow;
     % Identifying tracks to connect
-    connecting_lines = input('Lines to connect')
+    connecting_lines = input('Lines to connect');
     if ~isempty(connecting_lines)
 
         % Connect the tracks

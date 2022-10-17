@@ -25,8 +25,8 @@ videoFWriter.FrameRate = videoReader.FrameRate;
 videoFWriter.Quality = 100;
 
 open(videoFWriter);
-max_count = [videoReader.NumFrames];
-n_frames = max(videoReader.NumFrames, max_count);
+max_count = videoReader.NumFrames;
+%n_frames = max(videoReader.NumFrames, max_count);
 
 %% Load and save video frame by frame
 count= 1;
@@ -40,6 +40,8 @@ end
 
 try
     release(videoReader);
+catch
+    warning('Read Video Not released')
 end
 close(videoFWriter);
 disp('Complete')

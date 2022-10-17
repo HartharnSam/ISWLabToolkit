@@ -202,7 +202,8 @@ while ~isempty(p.DataType) %isstr(dec2hex(p.DataType)),
             p.nz=fread(f,1,'uint32');
             %myimage=zeros(p.nx,p.ny,p.nz);
             p.szCompress=fread(f,1,'uint32');
-            eval(['p.c=(fread(f,p.szCompress,''',typ,'''))'';']);
+            %eval(['p.c=(fread(f,p.szCompress,''',typ,'''))'';']);
+            p.c = fread(f, p.szCompress, typ)';
             %How about writing this to a .mat file manually since that uses
             %gzip compression? hmmm....that would be slow
             
@@ -219,8 +220,11 @@ while ~isempty(p.DataType) %isstr(dec2hex(p.DataType)),
             % here we read the image array - 2D image type
             p.nx = fread(f,1,'uint32');
             p.ny = fread(f,1,'uint32');
-            eval(['p.',str,' = (fread(f,(p.nBytes-8)/4,''',typ,'''))'';']);
-            eval(['p.',str,' = reshape(p.',str,',p.ny,p.nx);'])
+            %eval(['p.',str,' = (fread(f,(p.nBytes-8)/4,''',typ,'''))'';']);
+            p.(str) = fread(f, (p.nBytes-8)/4, typ);
+            %eval(['p.',str,' = reshape(p.',str,',p.ny,p.nx);'])
+            p.(str) = reshape(p.(str), p.ny, p.nx); 
+
         case {'11001','11004','11008'}
             % here we read the image array - 3D image type (although the
             % third dimension may be == 1
@@ -232,8 +236,11 @@ while ~isempty(p.DataType) %isstr(dec2hex(p.DataType)),
             p.nx = fread(f,1,'uint32');
             p.ny = fread(f,1,'uint32');
             p.nz = fread(f,1,'uint32');
-            eval(['p.',str,' = (fread(f,(p.nBytes-12)/divi,''',typ,'''))'';']);
-            eval(['p.',str,' = (reshape(p.',str,',p.nx,p.ny,p.nz));']);
+            p.(str) = (fread(f, (p.nBytes-12)/divi, typ))';
+            %eval(['p.',str,' = (fread(f,(p.nBytes-12)/divi,''',typ,'''))'';']);
+            % Uncomment for older matlab versions in place of p.(str) lines
+            p.(str) = (reshape(p.(str), p.nx, p.ny, p.nz));
+            %eval(['p.',str,' = (reshape(p.',str,',p.nx,p.ny,p.nz));']);
             
         case {'1014','1018'}
             % coloraxis data etc
@@ -266,8 +273,9 @@ while ~isempty(p.DataType) %isstr(dec2hex(p.DataType)),
             
         case {'3000','3001','3002'}
             %...and here char-arrays, comments etc
-            eval(['p.',str,'=char(fread(f,p.nBytes,''',typ,'''))'';']);
-            
+            typ = [typ, '=>char']; %#ok<AGROW> 
+            %eval(['p.',str,'=char(fread(f,p.nBytes,''',typ,'''))'';']);
+            p.(str) = fread(f,p.nBytes, typ)';
         case {'3018'}
             % Timing stuff
             p.iFrame=fread(f,1,'uint32');
@@ -312,6 +320,7 @@ while ~isempty(p.DataType) %isstr(dec2hex(p.DataType)),
         otherwise
             %disp('Error'); %return
             msgstring='There were some unknown tags in your .dfi file.';
+            warning(msgstring);
     end
     
     p.DataType=(fread(f,1,'uint32'));

@@ -13,7 +13,7 @@ subplot(1, 2, 1)
 plot(rho, z, '.k');
 
 % Sort & smooth (aggressively)
-[z zind] = unique(z, 'sorted');
+[z, zind] = unique(z, 'sorted');
 rho = rho(zind);
 rho = smooth(z, rho, 0.10, 'rloess');
 
