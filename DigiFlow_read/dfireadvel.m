@@ -320,7 +320,7 @@ while ~isempty(p.DataType) %isstr(dec2hex(p.DataType)),
         otherwise
             %disp('Error'); %return
             msgstring='There were some unknown tags in your .dfi file.';
-            warning(msgstring);
+            %warning(msgstring);
     end
     
     p.DataType=(fread(f,1,'uint32'));

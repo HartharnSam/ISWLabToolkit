@@ -290,9 +290,11 @@ switch lower(ForegroundType)
         U = im{fnm_index}.cdata(:, :, 1);
         V = im{fnm_index}.cdata(:, :, 2);
         %hh = streamline(grid{fnm_index}.X, grid{fnm_index}.Y, U, V, grid{fnm_index}.x2, grid{fnm_index}.y2);
+        if ~mod(dn, 2) % Want to make sure streamline spacing is non-even as it works better this way
+            dn = dn+1;
+        end
         hh = mstreamline(grid{fnm_index}.X, grid{fnm_index}.Y, U, V, dn);
-        % TODO: Fix this mstreamline function properly!
-        set(hh,'Color','k')
+        set(hh,'Color','w')
         
 end
 if isfield(ArgsIn, 'x1')
