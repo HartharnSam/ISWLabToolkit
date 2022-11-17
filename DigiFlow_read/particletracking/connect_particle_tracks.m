@@ -2,10 +2,10 @@ clearvars; close all; clc;
 
 % Plot the Initial Data
 
-filename = '.\CamC';
-load('./CamC/ptv_tracks.mat', 'ptv'); % Load in the data
+dirname = '.';
+load(fullfile(dirname, 'new_ptv_tracks_compiled.mat'), 'ptv'); % Load in the data
 % Make a conversion from pixels to WCS
-im = dfireadvel(fullfile(filename, 'output_0000.dfi'));
+im = dfireadvel(fullfile(dirname, 'output_0000.dfi'));
 Grid  = dfi_grid_read(im);
 timestep = 1/30;
 n_particles = ptv.n_particles;
@@ -28,7 +28,7 @@ while continuing
     set(gcf, 'Position', [1221 376 560 420]);
     drawnow;
     % Identifying tracks to connect
-    connecting_lines = input('Lines to connect');
+    connecting_lines = input('Lines to connect (empty if none): ');
     if ~isempty(connecting_lines)
 
         % Connect the tracks
@@ -59,6 +59,29 @@ figure_print_format(gcf)
 
 drawnow;
 
-if input('Is Ok?')
-    save('CamC\ptv_tracks_compiled.mat', 'ptv');
+if input('Is Ok to save (true/false)? ')
+    save(fullfile(dirname, 'ptv_tracks_compiled.mat'), 'ptv');
+end
+
+% Re-calculate velocities:
+recalc = true;
+    actual_track = ptv.data{1}(:, 1);
+Grid.yi = (0:ptv.n_timesteps)/30;
+if recalc
+    u = actual_track*NaN;
+    u_sm = u;
+    actual_track = ptv.data{1}(:, 1);
+    nnan_inds = find(~isnan(actual_track));
+    actual_track(nnan_inds(1):nnan_inds(end)) = smooth(Grid.yi(nnan_inds(1):nnan_inds(end)), ...
+        actual_track(nnan_inds(1):nnan_inds(end)), .05);
+
+    %% Calculate the float velocity
+    nnan_inds = find(~isnan(actual_track));
+    Dmat = FiniteDiff(Grid.yi(nnan_inds), 1, 2, false, ~(max(diff(nnan_inds))>1));
+    u(nnan_inds) = Dmat*actual_track(nnan_inds);
+    start_end_ind = nnan_inds(1):nnan_inds(end);
+    u_sm(start_end_ind) = smooth(Grid.yi(start_end_ind), u(start_end_ind), .05,  'rlowess');
+    ptv.data{1}(:, 3) = u_sm;
+    save(fullfile(dirname, 'ptv_tracks_compiled.mat'), 'ptv');
+
 end

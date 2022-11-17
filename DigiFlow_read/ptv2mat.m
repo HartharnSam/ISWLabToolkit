@@ -1,7 +1,10 @@
-function ptv2mat(filename, max_t, isPlot)
+function ptv2mat(dirname, max_t, isPlot)
 %PTV2MAT - reads in ptv data from each timestep incrementally, and
 %collates for each particle track, saves as ptv_tracks.mat
 %Can also track numbers vs locations over time if isPlot is "true" (doesn't save this)
+%
+% Inputs:
+%    dirname - Name for directory to look in
 %
 % Other m-files required: ptv_read, completion
 % Subfunctions: none
@@ -19,13 +22,13 @@ if nargin < 3
     isPlot = false;
 end
 
-max_files = numel(dir([filename, '/ptv_bas*']))-1;
+max_files = numel(dir([dirname, '/ptv_bas*']))-1;
 if nargin<2 || max_files<max_t
     max_t = max_files;
 end
 
 for i = 1:max_t
-    output = ptv_read(filename, i-1, 'full');
+    output = ptv_read(dirname, i-1, 'full');
     emptyoutput = [];
     for j = 1:length(output)
         if ~isempty(output{j})
@@ -76,10 +79,12 @@ for i = 1:max_t
     end
     completion(i, max_t);
 end
+particles = find(~cellfun(@isempty, ptv.data));
+ptv.data = ptv.data(particles);
 ptv.n_particles = length(ptv.data);
 ptv.n_timesteps = i;
 
-save(fullfile(filename, 'ptv_tracks.mat'), 'ptv');
+save(fullfile(dirname, 'ptv_tracks.mat'), 'ptv');
 
 
 function ptv = ptv_read(filename, framenumber, importtype)

@@ -191,7 +191,7 @@ switch lower(BackgroundType)
             % Add in ice and pycnocline boundaries
             im_ice_threshold = ArgsIn.ice_threshold; % Threshold for brightness attributed to "Ice"
             ice_thickness = ArgsIn.ice_thickness; % Max thickness of ice from surface
-            II = find_boundaries(ArgsIn.IceImageFname, 'ice', false, ice_thickness, im_ice_threshold);
+            II = find_boundaries(ArgsIn.IceImageFname, 'ice', ice_thickness, im_ice_threshold, false);
             y_ice = interp1(II.x, II.y_ice, X{1}(1, :));
             y_ice(isnan(y_ice)) = max(y{1});
 
@@ -240,7 +240,7 @@ switch lower(BackgroundType)
             % Add in ice and pycnocline boundaries
             im_ice_threshold = ArgsIn.ice_threshold; % Threshold for brightness attributed to "Ice"
             ice_thickness = ArgsIn.ice_thickness; % Max thickness of ice from surface
-            II = find_boundaries(ArgsIn.IceImageFname, 'ice', false, ice_thickness, im_ice_threshold);
+            II = find_boundaries(ArgsIn.IceImageFname, 'ice', ice_thickness, im_ice_threshold, false);
             y_ice = interp1(II.x, II.y_ice, X{1}(1, :));
             y_ice(isnan(y_ice)) = max(y{1});
 

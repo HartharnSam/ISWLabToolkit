@@ -2,10 +2,10 @@
 clc; clearvars; close all;
 
 % CHANGE HERE the probe measurement ID
-load 07062021
+load 11102022
 
 % Loads in the data from the .mat file
-z = data.FittedData(:, 1);
+z = data.FittedData(:, 4);
 rho = data.FittedData(:, 2);
 
 % Initial plot of density
@@ -13,8 +13,8 @@ subplot(1, 2, 1)
 plot(rho, z, '.k');
 
 % Sort & smooth (aggressively)
-[z, zind] = unique(z, 'sorted');
-rho = rho(zind);
+%[z, zind] = unique(z, 'sorted');
+%rho = rho(zind);
 rho = smooth(z, rho, 0.10, 'rloess');
 
 % Plot smoothed density profile

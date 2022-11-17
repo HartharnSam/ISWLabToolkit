@@ -54,7 +54,7 @@ switch (input.Type)
         end
         input.ColorRange = [0 1]*255;
     case 'PIV'
-        input.parameter = 3;
+        input.parameter = 2;
         input.Colormap = 'newbluewhitered';
         input.ColorRange = [-1 1]*6;
     otherwise % means side is empty - do nothing

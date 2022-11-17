@@ -116,9 +116,10 @@ if curr_CompNumber == 3
 else
     % Copy over High res PIV
     try
-        copyfile([orig_cam_dir, '\piv_hr*.dfi'], new_cam_dir);
+        copyfile([orig_cam_dir, '\piv_*.dfi'], new_cam_dir);
+        warning('correct to piv_hr')
         try
-            outputs = ls([orig_cam_dir, '\piv_hr*.dfi']);
+            outputs = ls([orig_cam_dir, '\piv_*.dfi']);
             im = dfireadvel([orig_cam_dir,'\', outputs(1, :)]);
         catch
             warning('PIV image may not be uncompacted/uncompressed')

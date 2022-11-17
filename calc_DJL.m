@@ -31,7 +31,7 @@ function [wavelength, DJL] = calc_DJL(h_1, h_2, h_pyc, wave_amp, rho_1, rho_2)
 m_path = mpath;
 addpath([m_path, 'DJLES'])
 
-L  = 7.0;  % domain width (m)
+L  = 14.0;  % domain width (m)
 H  = h_1+h_2;  % domain depth (m)
 a_d = 0.019/2; % del_rho
 delrho = abs(rho_1 - rho_2)/rho_2; %
@@ -71,7 +71,7 @@ for i = 1:length(Ai) % Test for various APEs
     amps(i, 1) = -wave_ampl;
 end
 
-clearvars -except a_d Ai amps d_d delrho NX NZ fr* H h_* L m_path rho rhoz Ub* verbose wave_amp z0_d
+%clearvars -except a_d Ai amps d_d delrho NX NZ fr* H h_* L m_path rho rhoz Ub* verbose wave_amp z0_d
 
 %% Now run for this amplitude
 ActualAPE = interp1(amps, Ai, wave_amp);
@@ -119,7 +119,7 @@ DJL.vorticity = vorticity;
 DJL.w = w; DJL.wx = wx; DJL.wz =wz; 
 DJL.WaveWavelength = wavelength; 
 DJL.x = xc; DJL.z = zc;
-save('DJL', 'DJL');
+save('DJL', 'DJL', 'uwave', 'c', 'x', 'z', 'density', 'L', 'wavelength');
 %---------------------------------------------------
 %% END OF CODE %%
 % --------------------------------------------------
