@@ -6,12 +6,14 @@
 % over transfer to DigiFlow code came from the use of a gaussian filter
 % and other bits and pieces in MATLAB script
 
-
 digiflowstartup;
 clearvars; close all; clc;
-im_ice_threshold = 32;
+im_ice_threshold = 28;
 ice_thickness = 0.04;
-diagnostic_plot = false;
+ts_level = 480;
+
+diagnostic_plot = true; % Slows it down a lot
+
 % Preallocate arrays
 fnm_in = strrep('output_####.dfi', '####', sprintf('%04d',0));
 im = dfireadvel(fnm_in);
@@ -20,6 +22,7 @@ grid = dfi_grid_read(im);
 nt = length(dir('output_*.dfi'));
 nx = im.nx;
 ts_data = NaN(nt, nx);
+
 for ii = 1:nt
     fnm_in = strrep('output_####.dfi', '####', sprintf('%04d',ii-1));
     im = dfireadvel(fnm_in);
@@ -35,13 +38,15 @@ for ii = 1:nt
         ice_mask(i, grid.Y(:, i) > y_ice(i)) = 1;
     end
     data(ice_mask') = NaN;
-    ts_data(ii, :) = data(end-501 ,: );
+    ts_data(ii, :) = data(end-ts_level ,: );
 
-    if diagnostic_plot && mod(ii, 50)==0
+    if diagnostic_plot && mod(ii, 80)==0
         figure(1)
         pcolor(grid.X, grid.Y, data);
         colormap('gray'); caxis([0 255]);
-
+        hold on
+        yline(grid.Y(end-ts_level, 1), 'r');
+        hold off
         figure(2)
         if ii >1
             pcolor(ts_data);
@@ -58,7 +63,7 @@ grid.ny = nt;
 grid.dy = im.tStep;
 grid.y = im.tFirst + [0 (nt-1)*im.tStep];
 grid.yi = grid.y(1):grid.dy:grid.y(2);
-[grid.X grid.Y] = meshgrid(grid.xi, grid.yi);
+[grid.X, grid.Y] = meshgrid(grid.xi, grid.yi);
 
 clear im
 im.cdata(:, :, 1) = ts_data;

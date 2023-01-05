@@ -39,6 +39,11 @@ if nargout > 8 || nargout == 1
     yi = linspace(y(1), y(2), ny);
 end
 if nargout > 10 || nargout == 1 % Make meshgrid type x and y
+    if size(im.cdata, 3) == 5
+        im.x = im.cdata(:, :, 4);
+        im.y = im.cdata(:, :, 5);
+        
+    end
     try 
         X = im.x;
         Y = im.y;

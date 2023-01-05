@@ -114,7 +114,7 @@ if diagnostic
     diag_sp(3) = subaxis(2, 2, 3);
     imagesc(II.x, II.y, II.im); shading flat; cmocean('grey');
     set(gca, 'YDir', 'normal', 'XDir', 'reverse');
-    axis equal;
+    %axis equal;
     xlim([min(II.x_range) max(II.x_range)]); ylim([min(II.y_range) max(II.y_range)]);
     hold on
     
@@ -149,7 +149,7 @@ if diagnostic
             diag_sp(2) = subaxis(2, 2, 2);
             imagesc(II.x, II.y, II.image_deep_peak); shading flat; cmocean('grey');
             set(gca, 'YDir', 'normal', 'XDir', 'reverse');
-            axis equal;
+            %axis equal;
             xlim([min(II.x_range) max(II.x_range)]); ylim([min(II.y_range) max(II.y_range)]);
             xlabel('x [m]');
             ylabel('z [m]');

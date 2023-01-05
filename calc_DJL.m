@@ -44,6 +44,7 @@ frhoz=@(z,d_d) -(a_d/d_d)*sech((z+z0_d)/d_d).^2; % derivative in z
 
 % The velocity profile (zero for this case) (m/s)
 Ubg=@(z) 0*z; Ubgz=@(z) 0*z; Ubgzz=@(z) 0*z;
+
 %% Set up a range of sample APEs and calculate corresponding amplitudes
 Ai = (1:10).*[3e-4; 0.5e-5; .5e-4]; % Set up an array of test APEs (m^4/s^2)
 Ai = unique(Ai(:)); % Double check no duplicates & sort
@@ -72,6 +73,58 @@ for i = 1:length(Ai) % Test for various APEs
 end
 
 %clearvars -except a_d Ai amps d_d delrho NX NZ fr* H h_* L m_path rho rhoz Ub* verbose wave_amp z0_d
+
+%% Now run for this amplitude
+ActualAPE = interp1(amps, Ai, wave_amp);
+if isnan(ActualAPE)
+    plot(amps, Ai, 'k-'); xlabel('Amplitude'); ylabel('APE');
+    error('Amplitude not within tested range of APEs')
+end
+A = ActualAPE; % APE for wave (m^4/s^2)
+calc_wavelength = true;
+epsilon = 1e-4;
+NX = 128; NZ = 64;
+
+%%%% Find the solution %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+start_time = clock;
+
+% Specify resolution and pycnocline parameter d_d according to this schedule
+% Iterate the DJL solution
+djles_refine_solution;
+% Increase the resolution, reduce epsilon, and iterate to convergence
+epsilon = 1e-5;
+NX = 512; NZ = 128;
+djles_refine_solution;
+
+% Increase the resolution, and iterate to convergence
+NX = 2048; NZ = 256;
+djles_refine_solution;
+
+% Compute and plot diagnostics
+djles_diagnostics; djles_plot; 
+wavelength = djles_wavelength(eta,L);
+
+end_time = clock;
+fprintf('Total wall clock time: %f seconds\n',etime(end_time, start_time));
+
+% Save some loopy things
+
+DJL.TestAPEs = Ai; 
+DJL.TestAmps = amps;
+DJL.WaveAPE = A;
+DJL.WaveAmp = -wave_ampl;
+DJL.WaveC = c;
+DJL.density = density; 
+DJL.eta = eta; DJL.etax = etax; DJL.etaz = etaz;
+DJL.u = u; DJL.ux = ux; DJL.uz = uz;
+DJL.vorticity = vorticity;
+DJL.w = w; DJL.wx = wx; DJL.wz =wz; 
+DJL.WaveWavelength = wavelength; 
+DJL.x = xc; DJL.z = zc;
+save('DJL', 'DJL', 'uwave', 'c', 'x', 'z', 'density', 'L', 'wavelength');
+%---------------------------------------------------
+%% END OF CODE %%
+% --------------------------------------------------
 
 %% Now run for this amplitude
 ActualAPE = interp1(amps, Ai, wave_amp);

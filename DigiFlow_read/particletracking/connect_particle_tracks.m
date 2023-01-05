@@ -1,9 +1,43 @@
 clearvars; close all; clc;
 
+%% Bring together multiple ptv files
+CamA = load('../CamC/ptv_tracks_compiled.mat');
+CamB = load('../CamB/ptv_tracks_compiled.mat');
+CamC = load('ptv_tracks_compiled.mat');
+
+n_times = max([CamA.ptv.n_timesteps CamB.ptv.n_timesteps CamC.ptv.n_timesteps]);
+%n_times = max([CamA.ptv.n_timesteps CamB.ptv.n_timesteps]);
+%n_times = max([CamA.ptv.n_timesteps]);
+
+new_ptv.data = CamA.ptv.data;
+count = CamA.ptv.n_particles;
+
+new_ptv.data(count+[1:CamB.ptv.n_particles]) = CamB.ptv.data;
+count = count+CamB.ptv.n_particles;
+
+
+new_ptv.data(count+[1:CamC.ptv.n_particles]) = CamC.ptv.data;
+count = count+CamC.ptv.n_particles;
+
+new_ptv.n_particles = count;
+new_ptv.n_timesteps = n_times;
+new_ptv.Variables = CamA.ptv.Variables;
+
+for ii = 1:count
+    current_length = length(new_ptv.data{ii});
+    new_ptv.data{ii}(current_length:n_times, :) = NaN;
+end
+ptv = new_ptv;
+save('new_ptv_tracks_compiled.mat', 'ptv');
+clearvars; close all;
+
+%%
 % Plot the Initial Data
 
 dirname = '.';
 load(fullfile(dirname, 'new_ptv_tracks_compiled.mat'), 'ptv'); % Load in the data
+%load(fullfile(dirname, 'ptv_tracks_compiled.mat'), 'ptv'); % Load in the data
+
 % Make a conversion from pixels to WCS
 im = dfireadvel(fullfile(dirname, 'output_0000.dfi'));
 Grid  = dfi_grid_read(im);
@@ -54,6 +88,9 @@ for i = 1:n_particles
         hold on
     end
 end
+particles = find(~cellfun(@isempty, ptv.data));
+ptv.data = ptv.data(particles);
+
 set(gcf, 'Position', [1221 376 560 420]);
 figure_print_format(gcf)
 
@@ -65,7 +102,7 @@ end
 
 % Re-calculate velocities:
 recalc = true;
-    actual_track = ptv.data{1}(:, 1);
+actual_track = ptv.data{1}(:, 1);
 Grid.yi = (0:ptv.n_timesteps)/30;
 if recalc
     u = actual_track*NaN;

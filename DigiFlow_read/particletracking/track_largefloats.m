@@ -1,9 +1,9 @@
 digiflowstartup;
 clc; clearvars; close all;
 % User parameters
-float_width = .350;
+float_width = .35;
 c_isw = 0.1;
-n_floats = 1;
+n_floats = 2;
 
 cutoff_percentage = .02; % Percentage of edge of frame to cut off
 
@@ -53,19 +53,20 @@ for ii = 1:grid.ny
         region = c_isw*grid.dy; % criteria based on ISW speed
         xpeak_min = xpeaks(ii-1)-region;
         xpeak_max = xpeaks(ii-1)+region;
+        xpeakind = find(xpeaks_tmp>xpeak_min & xpeaks_tmp<xpeak_max); % Identify which peak most closely matches the predicted path
+        if length(xpeakind)>=1
+            xpeaks_tmp(1) = xpeaks_tmp(xpeakind(1)); % Set the path location to the closest peak
+        end
 
-        if xpeaks_tmp(1) < xpeak_min || xpeaks_tmp(1) > xpeak_max % if the current location is within c_isw*dt
-            xpeakind = find(xpeaks_tmp>xpeak_min & xpeaks_tmp<xpeak_max); % Identify which peak most closely matches the predicted path
-            if length(xpeakind)>=1
-                xpeaks_tmp(1) = xpeaks_tmp(xpeakind(1)); % Set the path location to the closest peak
-            else % No closest path available, so identify a transition point
-                warning(['On ii = ', num2str(ii), ' Switch Paths!'])
-                xpeaks_tmp(1) = NaN;
-                trans_points = [trans_points ii];
-            end
+        if (xpeaks_tmp(1) < xpeak_min || xpeaks_tmp(1) > xpeak_max) || isnan(xpeaks_tmp(1)) % if the current location is within c_isw*dt
+            % No closest path available, so identify a transition point
+            warning(['On ii = ', num2str(ii), ' Switch Paths!'])
+            xpeaks_tmp = NaN;
+            trans_points = [trans_points ii];
         end
     end
     % Save this timestep's float location
+    xpeaks_tmp = xpeaks_tmp(~isnan(xpeaks_tmp));
     if ~isempty(xpeaks_tmp)
         xpeaks(ii) = xpeaks_tmp(1);
     else
