@@ -50,8 +50,10 @@ The values found were as follows (in units m<sup>3</sup>/s<sup>3</sup> x 10<sup>
 This script calculates APE density (J/m) from a column timeseries image using the method of Boegman et al. (2005). JFM, 531, 159-180. doi:10.1017/S0022112005003915.
 Pycnocline location calculated from find_boundaries, pycnocline location tool, then smoothed. 
 ![Pycnocline detection](./dfi_ts2APE.png)
+
 APE calculated as:
-$APE = cg * delta_rho * int_t0^t1(eta^2) dt$
+
+$$APE = cg * delta_rho * int_t0^t1(eta^2) dt$$
 
 
 
