@@ -4,18 +4,7 @@ These scripts are designed to calculate TKE dissipation from PIV fields, Written
 
 ## Script usage ##
 
-To calculate x-z-dissipation plots, open the script `turbulence_stats.m`.  In
-the USER INPUTS section near the start, you will need to:
-1) Change the folder where the .dfi data files are stored.
-2) Un-comment the ice type that you would like to plot (and comment the
-others).
-3) Run the script to make the plots.
-
-The summary plots for publication are then produced by `plot_dissipation_profile.m` in the same folder.
-
-Note: Matlab rasterizes the plots before saving them in pdf of epsc format because the plots were produced using pcolor.  The rasterization results in a resolution inferior to the .png version.  Consequently, the .png version is reccommended for publication.
-
-
+TODO Stuff: sort stuff
 
 ## Horizontally averaged dissipation profiles ##
 
@@ -24,10 +13,6 @@ Horizontal averaging of TKE dissipation is performed in `plot_dissipation_profil
 - Data from within 0.1m from each side of the plotted FOV (figure 5 in article) was discarded to remove potential edge effects from the PIV algorithm.  To visualize the generally low sensitivity of the results to the amount of edge cut off, produce figure 1111 with various different values of xr_min and xr_max (the amount of edge trimmed at the lower and upper ends of the figures).
 
 - At each depth level, all remaining data were averaged to provide a single average dissipaiton \overbar{\epsilon} at that level.
-
-- Figure 5, panels d, h, l, as well as the right panel in figure 1111, show that average epsilon.
-
-
 
 ## Dissipation in ice vs. pycnocline layers ##
 
@@ -56,9 +41,16 @@ APE calculated as:
 $$APE = cg * \Delta\rho * \int_{t_0}^{t_1}(\eta^2) dt$$
 
 ## Dissipation
+### Direct
+We can calculate dissipation directly, using the Direct estimate version of [Doron et al. (2001)](https://doi.org/10.1175/1520-0485(2001)0312108:TCADEI%3E2.0.CO;2), assuming isotropic turbulence:
 $$    \epsilon_d = 3 \nu \Biggl[ \Biggl< \left(\dfrac{\delta u}{\delta x}\right) ^2 \Biggr>  +  \Bigg \langle \left(\dfrac{\delta w}{\delta z}\right) ^2 \Bigg \rangle  + 
     \Bigg \langle \left(\dfrac{\delta u}{\delta z}\right) ^2 \Bigg \rangle +
     \Bigg \langle \left(\dfrac{\delta w}{\delta x}\right) ^2 \Bigg \rangle + \\
     2 \Bigg \langle \left(\dfrac{\delta u}{\delta z} \dfrac{\delta w}{\delta x}\right) \Bigg \rangle + 
     4/3 \Bigg \langle \left(\dfrac{\delta u}{\delta x} \dfrac{\delta w}{\delta z}\right) \Bigg \rangle \Biggr]
 $$
+
+### Spectral
+Various forms of these exist in 1D and 2D. Essentially, these calculate the power spectra of the velocity data [`spec2_ps_nopad.m`](./spec2_ps_nopad.m)/ [`spec_ps_nopad.m`](./spec_ps_nopad.m) and calculates the value of $\epsilon$ which closest fits the observed spectrum:
+![Nasmyth Spectra](./NasmythSpectra.png)
+
