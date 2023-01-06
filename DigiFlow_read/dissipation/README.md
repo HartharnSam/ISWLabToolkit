@@ -53,7 +53,7 @@ Pycnocline location calculated from find_boundaries, pycnocline location tool, t
 
 APE calculated as:
 
-$$APE = cg * delta_rho * int_t0^t1(eta^2) dt$$
+$$APE = cg * \Delta\rho * \int_{t_0}^{t_1}(\eta^2) dt$$
 
 
 
