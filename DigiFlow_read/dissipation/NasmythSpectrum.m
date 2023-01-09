@@ -104,9 +104,9 @@ universal.F = [universal_orig.F(1)*universal_orig.kn(1)^(5/3)*universal.kn(1:10)
 
 
 % % % Back to real units:
-% doplot = false;
+%  doplot = true;
 % if doplot
-%
+% 
 %     nu = 1E-6;                      % Viscosity
 %     epsilon = 10.^(-8:-2);          % dissipation [W/kg]
 %     eta = (nu^3./epsilon).^(1/4);   % Kolmogorov scale
@@ -119,10 +119,10 @@ universal.F = [universal_orig.F(1)*universal_orig.kn(1)^(5/3)*universal.kn(1:10)
 %     for i = 1:length(epsilon)
 %         leg_item{i} = ['$\epsilon = $', num2str(epsilon(i))];
 %     end
-%
+% 
 %     legend(leg_item, 'interpreter', 'latex')
 % end
-
+% 
 
 
 

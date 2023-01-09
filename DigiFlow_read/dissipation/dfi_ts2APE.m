@@ -4,6 +4,10 @@ function APE = dfi_ts2APE(filename, t0, t1, delta_rho, c0)
 %Identifying the pycnocline displacement via the pycnocline detection
 %method in FIND_BOUNDARIES (Peter Sutherland).
 %
+% Note, in comparisons to DJL, the DJL calculated APE needs a
+% multiplication factor of \rho_1, whilst both must be multiplied Ly to
+% give measures in J
+%
 % APE = cg * delta_rho * int_t0^t1(eta^2) dt
 %
 % Inputs:
