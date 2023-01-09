@@ -1,12 +1,6 @@
 # Hydralab Internal Waves Turbulence Calculations
 
-These scripts are designed to calculate TKE dissipation from PIV fields recorded during the HYDRALAB+ experiment, HY+_HSVA-08_UNI ST ANDREWS, conducted at HSVA ARCTECLAB – Arctic Environmental Test 
-Basin (AETB) in April 2018 under the direction of Magda Carr. Written by Peter Sutherland
-The primary objective was to study internal solitary wave propagation 
-in ice covered waters.
-
-The scripts have now been modified by Sam Hartharn-Evans for extended use in the Novak Laboratory to study internal solitary wave propagation in ice-covered waters
-
+These scripts are designed to calculate TKE dissipation from PIV fields, Written by Peter Sutherland for the Hydralab Internal Waves project. The primary objective was to study internal solitary wave propagation in ice covered waters. The scripts have now been modified by Sam Hartharn-Evans for extended use in the Novak Laboratory to study internal solitary wave propagation in ice-covered waters
 
 ## Script usage ##
 
@@ -52,4 +46,20 @@ The values found were as follows (in units m<sup>3</sup>/s<sup>3</sup> x 10<sup>
 | Nilas  | 2.8 | 4.4 |
 | Level  | 1.5 | 2.8 |
 
+## dfi_ts2APE
+This script calculates APE density (J/m) from a column timeseries image using the method of Boegman et al. (2005). JFM, 531, 159-180. doi:10.1017/S0022112005003915.
+Pycnocline location calculated from find_boundaries, pycnocline location tool, then smoothed. 
+![Pycnocline detection](./dfi_ts2APE.png)
+
+APE calculated as:
+
+$$APE = cg * \Delta\rho * \int_{t_0}^{t_1}(\eta^2) dt$$
+
+## Dissipation
+
+$$    \epsilon_d = 3 \nu \Biggl[ \Biggl< \left(\dfrac{\delta u}{\delta x}\right) ^2 \Biggr>  +  \Bigg \langle \left(\dfrac{\delta w}{\delta z}\right) ^2 \Bigg \rangle  +   \Bigg \langle \left(\dfrac{\delta u}{\delta z}\right) ^2 \Bigg \rangle +
+    \Bigg \langle \left(\dfrac{\delta w}{\delta x}\right) ^2 \Bigg \rangle + \\
+    2 \Bigg \langle \left(\dfrac{\delta u}{\delta z} \dfrac{\delta w}{\delta x}\right) \Bigg \rangle + 
+    4/3 \Bigg \langle \left(\dfrac{\delta u}{\delta x} \dfrac{\delta w}{\delta z}\right) \Bigg \rangle \Biggr]
+$$
 
