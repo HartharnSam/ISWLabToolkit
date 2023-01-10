@@ -1,5 +1,5 @@
-function fig = plot_dissipation(parameters, settings, grd, e_dir, II, ice_lines)
-%PLOT_DISSIPATION - Make some plots of input dissipation, calcualted by
+function fig = plot_dissipation(parameters, settings, e_spec, e_dir, II, ice_lines)
+%PLOT_DISSIPATION - Make some plots of input dissipation, calculated by
 %calc_dissipation
 %
 % Syntax:  fig = plot_dissipation(parameters,settings,grd, e_dir, II, ice_lines)
@@ -8,7 +8,7 @@ function fig = plot_dissipation(parameters, settings, grd, e_dir, II, ice_lines)
 %    parameters - 
 %    settings - structure containing plot settings (y_lim, x_lim,
 %    diss_lim, image_dir, image_file)
-%    grd - grd output by calc_dissipation
+%    e_spec - e_spec output by calc_dissipation
 %    e_dir - e_dir output by calc_dissipation
 %    II - Structure identifying boundaries, as produced by find_boundaries
 %    ice_lines - switch of which plots to add in ice masking to
@@ -58,7 +58,7 @@ fig = figure(12); clf;
 if ~isempty(positioning.direct_unwindowed)
     ax_pos = positioning.direct_unwindowed;
     s(ax_pos) = subaxis(n_rows, n_columns, ax_pos);
-    imagesc(e_dir.x, e_dir.y, log10(e_dir.e)); shading flat; cmocean('amp');
+    imagesc(e_dir.x, e_dir.y, log10(e_dir.e_image)); shading flat; cmocean('amp');
     set(ax_pos, 'YDir', 'normal', 'XDir', 'reverse');
     axis equal;
     caxis(diss_lim);
@@ -85,7 +85,7 @@ if ~isempty(positioning.direct_windowed)
     s(ax_pos) = subaxis(n_rows, n_columns, ax_pos);
     e_dir_plot = e_dir.e_filt;
     % Use contourf with line style 'none' due to pixelation of imagesc
-    contourf(grd.x, grd.y, log10(e_dir_plot), diss_lim(1):.1:diss_lim(2), 'LineStyle', 'none');
+    contourf(e_spec.x, e_spec.y, log10(e_dir_plot), diss_lim(1):.1:diss_lim(2), 'LineStyle', 'none');
     %imagesc(grd.x, grd.y, log10(e_dir_plot));
     set(s(ax_pos), 'YDir', 'normal', 'XDir', 'reverse');
     axis equal;
@@ -113,10 +113,10 @@ end
 if ~isempty(positioning.spectral)
     ax_pos = positioning.spectral;
     s(ax_pos) = subaxis(n_rows, n_columns, ax_pos);
-    spec_plot = grd.e_spec_1d_Nasmyth;
+    spec_plot = grd.1d_Nasmyth;
     
     % pcolor(linspace(x_range(1),x_range(2),n),linspace(y_range(2),y_range(1),m),log10(e_grad_im(end:-1:1,:)))
-    contourf(grd.x,grd.y,log10(spec_plot),diss_lim(1):.1:diss_lim(2), 'LineStyle','none');
+    contourf(e_spec.x,e_spec.y,log10(spec_plot),diss_lim(1):.1:diss_lim(2), 'LineStyle','none');
     set(s(ax_pos), 'YDir', 'normal', 'XDir', 'reverse'); axis equal;
     shading flat;
     colorbar;
@@ -150,12 +150,12 @@ if ~isempty(positioning.profile)
     s(ax_pos) = subaxis(n_rows, n_columns, ax_pos);
     if ice_lines(ax_pos)
         
-        grd.e_spec_1d(grd.ice_mask) = NaN;
+        e_spec.e1d(e_spec.ice_mask) = NaN;
     end
     e_dir_plot = e_dir.e_filt;
-    plot(log10(mean((grd.e_spec_1d), 2, 'omitnan')),grd.y,'r','LineWidth',3);
+    plot(log10(mean((e_spec.e1d), 2, 'omitnan')),e_spec.y,'r','LineWidth',3);
     hold on;
-    plot(log10(mean(e_dir_plot, 2, 'omitnan')),grd.y,'k','LineWidth',3)
+    plot(log10(mean(e_dir_plot, 2, 'omitnan')),e_spec.y,'k','LineWidth',3)
     xlim(diss_lim);
     grid on;
     xlabel('\epsilon [m^2/s^3]');

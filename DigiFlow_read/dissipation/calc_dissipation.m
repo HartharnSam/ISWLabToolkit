@@ -1,4 +1,4 @@
-function [grd, e_dir, ok_comp] = calc_dissipation(piv_dir, piv_fname, win_size, nu)
+function [e_spec, e_dir, ok_comp] = calc_dissipation(piv_dir, piv_fname, win_size, nu)
 %CALC_DISSIPATION - Calculates TKE (x, y) planes and plots images
 %Using Doran et al., 2001 method to calculate firstly direct dissipation
 %rate estimation, and then spectral estimate of the same. Carries out
@@ -13,8 +13,8 @@ function [grd, e_dir, ok_comp] = calc_dissipation(piv_dir, piv_fname, win_size, 
 %   nu - Kinematic viscosity
 %
 % OUTPUTS:
-%   grd - Structure containing calculated dissipation, and relevant grids
-%   e_dir - Another structure containing output dissipation info and grids
+%   e_spec - Structure of spectral - calculated dissipation, and relevant grids
+%   e_dir - Structure of direct - calculated dissipation, and relevant grids
 %   ok_comp - boolean ok calculation matrix
 %
 % Other m-files required: dfireadvel, dfi_grid_read, cmocean,
@@ -81,38 +81,41 @@ V(1:3,:) = NaN; V((end-2):end,:) = NaN; V(:,1:3) = NaN; V(:,(end-2):end) = NaN;
 %k_fit_range = [2*pi/Lx 1/f_nyq];
 
 %% Make the windowed grid
-grd.x_pix = 3 + (win_size/2):(win_size/4):(n-win_size/2); % overlapping grid, offset from edge by 3
-grd.y_pix = 3 + (win_size/2):(win_size/4):(m-win_size/2);
-[grd.X_pix, grd.Y_pix] = meshgrid(grd.x_pix, grd.y_pix);
-[grd.m, grd.n] = size(grd.X_pix);
+e_spec.x_pix = 3 + (win_size/2):(win_size/4):(n-win_size/2); % overlapping grid, offset from edge by 3
+e_spec.y_pix = 3 + (win_size/2):(win_size/4):(m-win_size/2);
+[e_spec.X_pix, e_spec.Y_pix] = meshgrid(e_spec.x_pix, e_spec.y_pix);
+[e_spec.m, e_spec.n] = size(e_spec.X_pix);
 
-grd.x = interp1([1, n], x_range, grd.x_pix);
-grd.y = interp1([1, m], y_range, grd.y_pix);
+e_spec.x = interp1([1, n], x_range, e_spec.x_pix);
+e_spec.y = interp1([1, m], y_range, e_spec.y_pix);
 
 % ----------------------------------------------------
 %% Calculate Dissipation
 % ----------------------------------------------------
 %% ---- Direct dissipation estimate from gradients ---
 e_dir.x = x; e_dir.y = y;
-e_dir.e_filt = NaN(grd.m,grd.n);
+e_dir.e_filt = NaN(e_spec.m,e_spec.n);
 
-[e_dir.e_diff, e_dir.e, e_dir.e_1d_x, e_dir.e_1d_y] = dissipation_gradient_2D(U, V, dx, dy, nu);
+[e_dir.e_diff, e_dir.e_image, e_dir.e_1d_x, e_dir.e_1d_y] = dissipation_gradient_2D(U, V, dx, dy, nu);
 
 %% ---- Spectral dissipation estimates ----
-grd.e_spec2D = NaN(grd.m, grd.n);
-grd.e_spec2D_Nasmyth = NaN(grd.m, grd.n);
+e_spec.e2D = NaN(e_spec.m, e_spec.n);
+e_spec.e2D_Nasmyth = NaN(e_spec.m, e_spec.n);
 
-grd.eps_ux = grd.e_spec2D; grd.eps_uy = grd.e_spec2D;
-grd.eps_vx = grd.e_spec2D; grd.eps_vy = grd.e_spec2D;
-grd.eps_ux_Nasmyth = grd.eps_ux;
-grd.eps_vy_Nasmyth = grd.eps_ux;
+e_spec.eps_ux = e_spec.e2D; e_spec.eps_uy = e_spec.e2D;
+e_spec.eps_vx = e_spec.e2D; e_spec.eps_vy = e_spec.e2D;
+e_spec.eps_ux_Nasmyth = e_spec.eps_ux;
+e_spec.eps_vy_Nasmyth = e_spec.eps_ux;
 temp_dx = abs(dx); % TODO - check if this has any rationale...
 temp_dy = abs(dy);
-for lm = 1:grd.m
-    for in = 1:grd.n
-        M_temp = grd.y_pix(lm) + ((-win_size/2 +1):win_size/2);
-        N_temp = grd.x_pix(in) + ((-win_size/2 +1):win_size/2);
-        
+for lm = 1:e_spec.m
+    for in = 1:e_spec.n
+        M_temp = e_spec.y_pix(lm) + ((-win_size/2 +1):win_size/2);
+        N_temp = e_spec.x_pix(in) + ((-win_size/2 +1):win_size/2);
+
+        % Direct dissipation with window filter
+        e_dir.e_filt(lm,in) = mean(mean(e_dir.e_image(M_temp,N_temp), 'omitnan'), 'omitnan');
+
         % 2D Spectra
         [S2u_t.S,S2u_t.kx,S2u_t.ky] = spec2_ps_nopad(U(M_temp,N_temp),2*pi/temp_dx,2*pi/temp_dy,win_size,win_size,'hanning');
         S2u_t.E11 = trapz(S2u_t.ky,S2u_t.S,1);
@@ -135,24 +138,19 @@ for lm = 1:grd.m
         Sy_t.Eu22 = mean(Sy_t.Su,2, 'omitnan');
         
         [~,Sy_t.Sv,~] = spec_ps_nopad(V(M_temp,N_temp),2*pi/temp_dy,1,'hanning');
-        Sy_t.Ev11 = mean(Sy_t.Sv,2, 'omitnan');
-        
-        
-        % Direct dissipation
-        e_dir.e_filt(lm,in) = mean(mean(e_dir.e(M_temp,N_temp), 'omitnan'), 'omitnan');
-        
+        Sy_t.Ev11 = mean(Sy_t.Sv,2, 'omitnan');     
         
         % k_fit_range = [200 900];
         ok_ku = (S2u_t.k>=min(k_fit_range))&(S2u_t.k<=max(k_fit_range));
         ok_kv = (S2v_t.k>=min(k_fit_range))&(S2v_t.k<=max(k_fit_range));
         
         % Fit k^{-5/3} curves to horizontal / vertical energy spectra
-        grd.e_spec2D(lm,in) = real((mean((S2u_t.E11(ok_ku).*S2u_t.k(ok_ku).^(5/3)/(1.5*18/55)).^(3/2)) + ...
+        e_spec.e2D(lm,in) = real((mean((S2u_t.E11(ok_ku).*S2u_t.k(ok_ku).^(5/3)/(1.5*18/55)).^(3/2)) + ...
             mean((S2v_t.E11(ok_kv).*S2v_t.k(ok_kv).^(5/3)/(1.5*18/55)).^(3/2))) / 2 );
         
         % Fit Nasmyth spectrum to vertically / horizontally integrated 2D
         % spectra
-        grd.e_spec2D_Nasmyth(lm,in) = (NasmythFit(S2u_t.k(ok_ku), S2u_t.E11(ok_ku), nu) + ...
+        e_spec.e2D_Nasmyth(lm,in) = (NasmythFit(S2u_t.k(ok_ku), S2u_t.E11(ok_ku), nu) + ...
             NasmythFit(S2v_t.k(ok_kv),S2v_t.E11(ok_kv), nu) ) / 2;
         % Calculates the best fitting epsilon for u and v spectra and
         % averages between them
@@ -161,29 +159,29 @@ for lm = 1:grd.m
         ok_ky = (Sy_t.k>=min(k_fit_range))&(Sy_t.k<=max(k_fit_range));
         
         % Fit k^{-5/3} curves to 1-D spectra
-        grd.eps_ux_c(lm,in) = mean( (Sx_t.Eu11(ok_kx).*Sx_t.k(ok_kx).^(5/3)/(1.5*18/55)).^(3/2) );
-        grd.eps_ux(lm,in) = (Sx_t.k(ok_kx).^(-5/3)\Sx_t.Eu11(ok_kx)/(1.5*18/55)).^(3/2);
+        e_spec.eps_ux_c(lm,in) = mean( (Sx_t.Eu11(ok_kx).*Sx_t.k(ok_kx).^(5/3)/(1.5*18/55)).^(3/2) );
+        e_spec.eps_ux(lm,in) = (Sx_t.k(ok_kx).^(-5/3)\Sx_t.Eu11(ok_kx)/(1.5*18/55)).^(3/2);
         
         % grd.eps_vy(lm,in) = mean((Sy_t.Ev11(ok_ky).*Sy_t.k(ok_ky).^(5/3)/(1.5*18/55)).^(3/2));
-        grd.eps_vy(lm,in) = (Sy_t.k(ok_kx).^(-5/3)\Sy_t.Ev11(ok_kx)/(1.5*18/55)).^(3/2);
+        e_spec.eps_vy(lm,in) = (Sy_t.k(ok_kx).^(-5/3)\Sy_t.Ev11(ok_kx)/(1.5*18/55)).^(3/2);
         
         % grd.eps_uy(lm,in) = mean((Sy_t.Eu22(ok_kx).*Sy_t.k(ok_kx).^(5/3)/(1.5*24/55)).^(3/2));
-        grd.eps_uy(lm,in) = (Sy_t.k(ok_kx).^(-5/3)\Sy_t.Eu22(ok_kx)/(1.5*18/55)).^(3/2);
+        e_spec.eps_uy(lm,in) = (Sy_t.k(ok_kx).^(-5/3)\Sy_t.Eu22(ok_kx)/(1.5*18/55)).^(3/2);
         
         % grd.eps_vx(lm,in) = mean((Sx_t.Ev22(ok_ky).*Sx_t.k(ok_ky).^(5/3)/(1.5*24/55)).^(3/2));
-        grd.eps_vx(lm,in) = (Sx_t.k(ok_kx).^(-5/3)\Sx_t.Ev22(ok_kx)/(1.5*18/55)).^(3/2);
+        e_spec.eps_vx(lm,in) = (Sx_t.k(ok_kx).^(-5/3)\Sx_t.Ev22(ok_kx)/(1.5*18/55)).^(3/2);
         
         % Fit Nasmyth spectra to horizontal / vertical 1D spectra
-        grd.eps_ux_Nasmyth(lm,in) = NasmythFit(Sx_t.k(ok_kx),Sx_t.Eu11(ok_kx));
-        grd.eps_vy_Nasmyth(lm,in) = NasmythFit(Sy_t.k(ok_kx),Sy_t.Ev11(ok_kx));
+        e_spec.eps_ux_Nasmyth(lm,in) = NasmythFit(Sx_t.k(ok_kx),Sx_t.Eu11(ok_kx));
+        e_spec.eps_vy_Nasmyth(lm,in) = NasmythFit(Sy_t.k(ok_kx),Sy_t.Ev11(ok_kx));
     end
 end
 
-grd.e_spec_1d = (grd.eps_ux + grd.eps_uy + grd.eps_vx + grd.eps_vy) / 4;
-grd.e_spec_1d_Nasmyth = (grd.eps_ux_Nasmyth + grd.eps_vy_Nasmyth) /2;
+e_spec.e1d = (e_spec.eps_ux + e_spec.eps_uy + e_spec.eps_vx + e_spec.eps_vy) / 4;
+e_spec.e1d_Nasmyth = (e_spec.eps_ux_Nasmyth + e_spec.eps_vy_Nasmyth) /2;
 
-ok_comp = (grd.X_pix>=min(k_fit_range))&(grd.X_pix<=max(k_fit_range)) ...
-    &(grd.Y_pix>=min(k_fit_range))&(grd.Y_pix<=max(k_fit_range));
+ok_comp = (e_spec.X_pix>=min(k_fit_range))&(e_spec.X_pix<=max(k_fit_range)) ...
+    &(e_spec.Y_pix>=min(k_fit_range))&(e_spec.Y_pix<=max(k_fit_range));
 
 disp('==================================================================');
 disp(['Window size = ' num2str(win_size)]);

@@ -1,7 +1,7 @@
 % Example run script to calculate and then plot dissipationy things
 
 clc; clearvars; close all; 
-piv_dir = 'D:\OneDrive - Newcastle University\02_PhD_Project\04_Ice_Covered_Waters\02_Raw_data\CameraData\050122\CamB';
+piv_dir = 'D:\OneDrive - Newcastle University\02_PhD_Project\04_Ice_Covered_Waters\02_Raw_data\01_CameraData\050122\CamB';
 piv_fname = ['\piv_0590.dfi'];
 image_dir = piv_dir;
 image_fname = ['\output_0590.dfi'];
@@ -17,7 +17,7 @@ k_fit_range = [2*pi/Lx 1/f_nyq];
 nu =1.7E-6;
 ice_props.ice_thickness = .05; % Max thickness of ice from surface
 
-[grd, e_dir, II] = calculate_dissipation(piv_dir, piv_fname, image_dir, image_fname, win_size, k_fit_range, nu, ice_props, diagnostic);
+[grd, e_dir, II] = calc_dissipation(piv_dir, piv_fname, win_size, nu);
 %%
 
 ice_lines = [true, true, true, false]; % Which plots are going to have the presence of "ice" added to them?

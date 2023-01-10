@@ -54,8 +54,8 @@ dv_dx(:,1) = NaN; dv_dx(:,end) = NaN;
 du_dy(1,:) = NaN; du_dy(end,:) = NaN; 
 dv_dy(1,:) = NaN; dv_dy(end,:) = NaN; 
 
-%e_diff = 3*nu*(mean(du_dx(:).^2, 'omitnan') + mean(du_dy(:).^2, 'omitnan') + mean(dv_dx(:).^2, 'omitnan') +...
-%    mean(dv_dy(:).^2, 'omitnan') + mean(2*du_dy(:).*dv_dx(:), 'omitnan') + 2/3*mean(du_dx(:).*dv_dy(:), 'omitnan'));
+e_diff = 3*nu*(mean(du_dx(:).^2, 'omitnan') + mean(du_dy(:).^2, 'omitnan') + mean(dv_dx(:).^2, 'omitnan') +...
+    mean(dv_dy(:).^2, 'omitnan') + mean(2*du_dy(:).*dv_dx(:), 'omitnan') + 2/3*mean(du_dx(:).*dv_dy(:), 'omitnan'));
 
 % Version from Doran et al., 2001 - 2D by assuming isostophy
 e_image = 3*nu*(du_dx.^2 + du_dy.^2 + dv_dx.^2 + dv_dy.^2 + 2*du_dy.*dv_dx + 2/3*du_dx.*dv_dy);

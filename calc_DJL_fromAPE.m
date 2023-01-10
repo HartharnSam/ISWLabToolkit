@@ -1,4 +1,7 @@
 function [wavelength, DJL] = calc_DJL_fromAPE(h_1, h_2, h_pyc, APE, rho_1, rho_2)
+% CURRENTLY NOT WORKING - Giving exceptionally long waves, and amplitudes
+% are not converging
+% 
 %CALC_DJL_fromAPE - Calculates a DJL solution to match the lab wave, based off the
 %measured wave APE.
 %
@@ -99,6 +102,10 @@ DJL.w = w; DJL.wx = wx; DJL.wz =wz;
 DJL.WaveWavelength = wavelength; 
 DJL.x = xc; DJL.z = zc;
 save('DJL', 'DJL', 'uwave', 'c', 'x', 'z', 'density', 'L', 'wavelength');
+if nargout > 0
+    wavel = wavelength;
+
+end
 %---------------------------------------------------
 %% END OF CODE %%
 % --------------------------------------------------
