@@ -10,12 +10,10 @@ The package is licenced under the MIT licence, see LICENSE for more information.
 ## Introduction
 The lab data primarily comes in 2 forms, the recorded videos from cameras, processed initially in DigiFlow, and the density data from microconductivity probes (which run on an Arduino system). The scripts contain the main functions to read this data into MATLAB and analyse, as well as in places scripts that interface into other software (primarily here DigiFlow). A couple of the MATLAB scripts help in the basic day-to-day running of the lab, e.g. `copycamfiles.m`, `Camera_parallelisation.m` 
 
-There are some other files that are useful, e.g. parameter calculating spreadsheets and records sheets. TODO: Upload these. 
-
 ## Installation 
 ### Full Installation
-`git clone --recurse-submodules https://github.com/HartharnSam/ISWLabToolkit`
-Then you'll want to add this whole ordeal to your MATLAB path (temporarily with `addpath(genpath('path/to/the/toolkit'));`) or permanently by adding that code to `startup.m`
+	git clone --recurse-submodules https://github.com/HartharnSam/ISWLabToolkit
+Then you'll want to add this whole ordeal to your MATLAB path (temporarily with `addpath(genpath('path/to/the/toolkit'));`) or permanently by adding that code to `startup.m`. startup.m should be found in the file you find by typing userpath into the matlab command window - if it is not, create one.
 
 ## Files:
 - /Cameras *This directory should contain files needed for camera operation in DigiFlow. More detailed README within*
