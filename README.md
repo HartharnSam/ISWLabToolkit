@@ -12,9 +12,6 @@ There are some other files that are useful, e.g. parameter calculating spreadshe
 `git clone --recurse-submodules https://github.com/HartharnSam/ISWLabToolkit`
 Then you'll want to add this whole ordeal to your MATLAB path (temporarily with `addpath(genpath('path/to/the/toolkit'));`) or permanently by adding that code to `startup.m`
 
-### Partial Installation 
-TODO
-
 ## Files:
 - /Cameras *This directory should contain files needed for camera operation in DigiFlow. More detailed README within*
 - /DigiFlow_read *This directory should contain files needed for reading & processing DigiFlow data in MATLAB. More detailed README within*
@@ -30,9 +27,10 @@ TODO
 - `setup.sh` *Sets up folder structures each day, makes sure copies of relevant scripts are where they'll need to be later on*
 
 ## Acknowledgements & Licence
-This really is a collection of projects and scripts from various authors, where possible acknowledgements have been made within scripts. 
+This really is a collection of projects and scripts from various authors. The project overall was created by Sam Hartharn-Evans. The initial dfireadvel package, which became digiflow_read was created by J.K.Sveen@damtp.cam.ac.uk. The initial dissipation package within DigiFlow_read was created by Peter Sutherland. There are also contributions from Marek Stastna (University of Waterloo), Magda Carr (Newcastle University) and the DJLES package is the Dunphy et al. (2011) package. 
+Where possible, individual acknowledgements have been made within scripts. 
 
-The overall package is licenced as MIT. 
+The package is licenced under the MIT licence, see `LICENSE` for more information. 
 
 
 ## Further Reading
