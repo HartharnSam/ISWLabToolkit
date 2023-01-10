@@ -12,11 +12,10 @@ The lab data primarily comes in 2 forms, the recorded videos from cameras, proce
 
 ## Installation 
 ### Full Installation
-	git clone --recurse-submodules https://github.com/HartharnSam/ISWLabToolkit
+First off, 
+	```git clone --recurse-submodules https://github.com/HartharnSam/ISWLabToolkit```
 Then you'll want to add this whole ordeal to your MATLAB path, which can be done:
-- temporarily with 
-
-	addpath(genpath('path/to/the/toolkit')); 
+- temporarily with  ```addpath(genpath('path/to/the/toolkit'));```
 - permanently by adding the addpath... code to `startup.m`. startup.m should be found in the file you find by typing userpath into the matlab command window - if it is not, create one.
 
 ## Files:
