@@ -2,7 +2,7 @@ Scripts related to the operation of conductivity probes through the Arduino syst
 Contributions from Paul Watson (Newcastle University)
 
 ## Files:
-- Probe Drivers: arduino board code for collecting dataManualProbeOperation: Manually operated probes, press button for each batch of readings at a given and manually recorded height
+- Probe Drivers: arduino board code for collecting data:
 	- [`ProbeOperation.ino`](<./Probe Drivers/ProbeOperation/ProbeOperation.ino>): For normal probe operation with functioning potentiometer
 	- [`TestPotentiometer.ino`](<./Probe Drivers/TestPotentiometer/TestPotentiometer.ino>): Prints outputs every second for general diagnostics
 	- [`ManualProbeOperation.ino`](<./Probe Drivers/ManualProbeOperation/ManualProbeOperation.ino>): Returns outputs for each button press, with manually recorded depths
