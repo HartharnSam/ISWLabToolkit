@@ -20,6 +20,7 @@ $$APE = cg * \Delta\rho * \int_{t_0}^{t_1}(\eta^2) dt$$
 
 TODO: 
 - [ ] Optional input of reference $z$, rather than $\eta(0)$
+- [ ] Assumptions: I think this assumes the reference level is a background profile, and that h_pyc -> 0
 
 
 ## Dissipation
