@@ -91,6 +91,14 @@ if isNewWCS % Copy over new wcs to the parent (Holding) folder
 end
 
 %% Copy PTV data if required
+        copyfile([orig_cam_dir, '\piv_hr_*.dfi'], new_cam_dir);
+
+try
+            outputs = ls([orig_cam_dir, '\piv_hr_*.dfi']);
+            im = dfireadvel([orig_cam_dir,'\', outputs(1, :)]);
+        catch
+            warning('PIV image may not be uncompacted/uncompressed')
+        end
 if curr_CompNumber == 3
     % Copy raw DigiFlow (.txt) output
 %    copyfile([orig_cam_dir, '\ptv_*.txt'], new_cam_dir);
@@ -119,7 +127,7 @@ else
         %copyfile([orig_cam_dir, '\piv_*.dfi'], new_cam_dir);
         warning('correct to piv_hr')
         try
-            outputs = ls([orig_cam_dir, '\piv_*.dfi']);
+            outputs = ls([orig_cam_dir, '\piv_hr_*.dfi']);
             im = dfireadvel([orig_cam_dir,'\', outputs(1, :)]);
         catch
             warning('PIV image may not be uncompacted/uncompressed')

@@ -13,3 +13,4 @@ function m_path = mpath
 st = dbstack('-completenames', 1);
 m_path = fileparts(st(1).file);
 m_path = [m_path, '/'];
+end

@@ -1,9 +1,27 @@
-digiflowstartup;
+%TRACK_LARGEFLOATS - Taking an ice_ts.mat Hovmoller plot, identifies
+%the edges of the float (NaN Regions) and with user input, identifies the
+%float location through time. 
+%
+% Other m-files required: FiniteDiff, smooth
+% Subfunctions: none
+% MAT-files required: ICE_TS
+%
+% Author: Sam Hartharn-Evans
+% School of Mathematics, Statistics and Physics, Newcastle University
+% email address: s.hartharn-evans2@newcastle.ac.uk
+% GitHub: https://github.com/HartharnSam
+% Oct-2022; Last revision: 23-Jan-2023
+% MATLAB Version: 9.12.0.2009381 (R2022a) Update 4
+%
+%---------------------------------------------------
+%% BEGIN CODE %%
+%---------------------------------------------------
 clc; clearvars; close all;
+
 % User parameters
-float_width = .35;
-c_isw = 0.1;
-n_floats = 2;
+float_width = 1.2; % Length of the float
+c_isw = 0.1; % Indicative speed of the wave, does not need to be accurate
+n_floats = 1; % Number of float paths the code will record. NB, if the float passes off screen and returns, it will count as 2. 
 
 cutoff_percentage = .02; % Percentage of edge of frame to cut off
 
@@ -17,7 +35,6 @@ imagesc(grid.x, grid.y, data);
 xlabel('x'); ylabel('t')
 colormap('gray')
 title('Initial Data')
-figure_print_format(gcf);
 
 %% Detect float edges
 % Pre-allocate arrays
@@ -118,7 +135,6 @@ for ii = 1:length(new_trans_points)-1
 
     hold off
     legend('Current Track', 'Later Track', 'location', 'bestoutside')
-    figure_print_format(gcf);
     drawnow;
 
     % Join tracks back together with user input
@@ -172,7 +188,6 @@ hold on
 plot(actual_track, grid.yi, 'b-x')
 xlabel('x (m)'); ylabel('t (s)')
 title('Finalised Particle Tracks')
-
 
 figure(5);
 plot(grid.yi, u, 'k-');
