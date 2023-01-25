@@ -24,10 +24,10 @@ TODO:
 
 
 ## Dissipation
-Running [`calc_dissipation`](./calc_dissipation.m) produces structures with the various calculated dissipation, both spectral and direct, and using 1 & 2D.
+Running [`calc_dissipation`](./calc_dissipation.m) produces structures with the various calculated dissipation, both spectral and direct, and using 1 & 2D. Dissipation calculations for PIV is based on [Doron et al. (2001)](https://doi.org/10.1175/1520-0485(2001)0312108:TCADEI%3E2.0.CO;2).
 
 ### Direct
-We can calculate dissipation directly, using the Direct estimate version of [Doron et al. (2001)](https://doi.org/10.1175/1520-0485(2001)0312108:TCADEI%3E2.0.CO;2), assuming isotropic turbulence:
+We can calculate dissipation directly, using the Direct estimate version of Doron et al. (2001), assuming isotropic turbulence:
 
 $$    \epsilon_d = 3 \nu \Biggl[ \Biggl< \left(\dfrac{\delta u}{\delta x}\right) ^2 \Biggr>  +  \Bigg \langle \left(\dfrac{\delta w}{\delta z}\right) ^2 \Bigg \rangle  + \Bigg \langle \left(\dfrac{\delta u}{\delta z}\right) ^2 \Bigg \rangle + \Bigg \langle \left(\dfrac{\delta w}{\delta x}\right) ^2 \Bigg \rangle + \\
     2 \Bigg \langle \left(\dfrac{\delta u}{\delta z} \dfrac{\delta w}{\delta x}\right) \Bigg \rangle + 4/3 \Bigg \langle \left(\dfrac{\delta u}{\delta x} \dfrac{\delta w}{\delta z}\right) \Bigg \rangle \Biggr]
@@ -43,8 +43,36 @@ The "Direct" parts output from calc_dissipation are _e_dir_. The following parts
 - _e\_filt_ : A window-mean filter applied to _e_dir.e_image_
 
 ### Spectral
-Various forms of these exist in 1D and 2D. Essentially, these calculate the power spectra of the velocity data [`spec2_ps_nopad.m`](./spec2_ps_nopad.m)/ [`spec_ps_nopad.m`](./spec_ps_nopad.m) and calculates the value of $\epsilon$ which closest fits the observed spectrum:
+Various forms of these exist in 1D and 2D. Essentially, these calculate the power spectra of the velocity data [`spec2_ps_nopad.m`](./spec2_ps_nopad.m)/ [`spec_ps_nopad.m`](./spec_ps_nopad.m) and calculates the value of $\epsilon$ which closest fits the observed spectrum. 
+The Fourier transform of the velocity is calculate. $u_i$ and $k_i$ are velocity wavenumber in the $i$ direction, ($i= 1, 2 and 3 $are the $x, y,$ and $z$ planes) at coordinate ($x_n$, $z_n$), and $W(x_n)$ is a windowing function. 
+
+$$ F_i(k_1, z_j) = \sum_n u_i(x_n, z_j)W(x_n, z_j) e^{-ik_1x_n} $$
+
+From which, spectral density is:
+
+$$ E_{ii}(k_1, z_j) = \frac{L}{2\pi N^2}\sum_n F_i(k_1, z_j)F_i^*(k_1, z_j) $$
+
+L is the domain length, N is number of points. $F_i*$ is the complex conjugate of $F_i$. From this we get a spectra.
+#TODO: Add in a figure of the spectra?
+
+$l$ is a typical length scale of large eddies, $\eta = ( \frac{\nu}{\epsilon}) ^{1/4}$ is the Kolmogorov microscale (the smallest eddy size). According to Kolmogorov's $K^{-5/3}$ law:
+
+$$ S = A\epsilon^{2/3}K^{-5/3} $$
+
+$$ l^{-1} << K << \eta^{-1} $$
+
+$A \simeq 1.5$ as a universal constant, that range is the inertial subrange. And for $ K >> \eta^{-1} $, there is a $K^{-3}$ power law. 
+BUT, observations in the ocean do not quite match this Kolmogorov law, and there is no analytical law covering the entire range of $ K>>l^{-1}$, so there is the empirically derived Nasmyth Spectra ([Nasmyth, 1970](https://dx.doi.org/10.14288/1.0302459)). 
+
+From the original Nasmyth Spectra ($k_{nas}$, $E_{nas}$), we can calculate Nasmyth spectra for a given dissipation rate:
+
+$$ k = k_{nas}(\frac{\nu^3}{\epsilon})^{1/4} $$
+
+$$ E = E_{nas}(\epsilon\nu^5)^{-1/4} $$
+
 ![Nasmyth Spectra](./NasmythSpectra.png)
+
+The "Spectral" parts of calc_dissipation therefore calculates a best fit $\epsilon$ for observed $E_{ii}$ against either the Nasmyth spectra or Kolmogorov's spectra. 
 
 The "Spectral" parts of calc_dissipation are _e_spec_. The following parts:
 - _x \& y_ : Array for grids corresponding to spectral dissipation estimates
