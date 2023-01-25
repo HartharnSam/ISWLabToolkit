@@ -33,7 +33,7 @@ $$    \epsilon_d = 3 \nu \Biggl[ \Biggl< \left(\dfrac{\delta u}{\delta x}\right)
     2 \Bigg \langle \left(\dfrac{\delta u}{\delta z} \dfrac{\delta w}{\delta x}\right) \Bigg \rangle + 4/3 \Bigg \langle \left(\dfrac{\delta u}{\delta x} \dfrac{\delta w}{\delta z}\right) \Bigg \rangle \Biggr]
 $$
 
-The bit of code to do this is [`dissipation_gradient_2D`](./dissipation_gradient_2D.m), typically called from `calc_dissipation`, but can be used directly with inputs of _U, V, dx, dy, and $\nu$_. 
+The bit of code to do this is [`dissipation_gradient_2D`](./dissipation_gradient_2D.m), typically called from `calc_dissipation`, but can be used directly with inputs of _U, V, dx, dy, and_ $\nu$. 
 
 The "Direct" parts output from calc_dissipation are _e_dir_. The following parts:
 - _x_ \& _y_: grids corresponding to direct dissipation estimates
@@ -44,7 +44,7 @@ The "Direct" parts output from calc_dissipation are _e_dir_. The following parts
 
 ### Spectral
 Various forms of these exist in 1D and 2D. Essentially, these calculate the power spectra of the velocity data [`spec2_ps_nopad.m`](./spec2_ps_nopad.m)/ [`spec_ps_nopad.m`](./spec_ps_nopad.m) and calculates the value of $\epsilon$ which closest fits the observed spectrum. 
-The Fourier transform of the velocity is calculate. $u_i$ and $k_i$ are velocity wavenumber in the $i$ direction, ($i= 1, 2 and 3 $are the $x, y,$ and $z$ planes) at coordinate ($x_n$, $z_n$), and $W(x_n)$ is a windowing function. 
+The Fourier transform of the velocity is calculate. $u_i$ and $k_i$ are velocity wavenumber in the $i$ direction, ( $i=1, 2$ and $3$ are the $x, y,$ and $z$ planes) at coordinate ( $x_n$ , $z_n$ ), and $W(x_n)$ is a windowing function. 
 
 $$ F_i(k_1, z_j) = \sum_n u_i(x_n, z_j)W(x_n, z_j) e^{-ik_1x_n} $$
 
@@ -61,10 +61,10 @@ $$ S = A\epsilon^{2/3}K^{-5/3} $$
 
 $$ l^{-1} << K << \eta^{-1} $$
 
-$A \simeq 1.5$ as a universal constant, that range is the inertial subrange. And for $ K >> \eta^{-1} $, there is a $K^{-3}$ power law. 
-BUT, observations in the ocean do not quite match this Kolmogorov law, and there is no analytical law covering the entire range of $ K>>l^{-1}$, so there is the empirically derived Nasmyth Spectra ([Nasmyth, 1970](https://dx.doi.org/10.14288/1.0302459)). 
+$A \simeq 1.5$ as a universal constant, that range is the inertial subrange. And for $K >> \eta^{-1}$, there is a $K^{-3}$ power law. 
+BUT, observations in the ocean do not quite match this Kolmogorov law, and there is no analytical law covering the entire range of $K>>l^{-1}$, so there is the empirically derived Nasmyth Spectra ([Nasmyth, 1970](https://dx.doi.org/10.14288/1.0302459)). 
 
-From the original Nasmyth Spectra ($k_{nas}$, $E_{nas}$), we can calculate Nasmyth spectra for a given dissipation rate:
+From the original Nasmyth Spectra ( $k_{nas}$, $E_{nas}$ ), we can calculate Nasmyth spectra for a given dissipation rate:
 
 $$ k = k_{nas}(\frac{\nu^3}{\epsilon})^{1/4} $$
 
