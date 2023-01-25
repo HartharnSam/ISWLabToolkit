@@ -53,7 +53,7 @@ From which, spectral density is:
 $$ E_{ii}(k_1, z_j) = \frac{L}{2\pi N^2}\sum_n F_i(k_1, z_j)F_i^*(k_1, z_j) $$
 
 L is the domain length, N is number of points. $F_i*$ is the complex conjugate of $F_i$. From this we get a spectra.
-#TODO: Add in a figure of the spectra?
+![Kolmogorov Nasmyth Spectra comparison](./KolmogorovNasmyth.png)
 
 $l$ is a typical length scale of large eddies, $\eta = ( \frac{\nu}{\epsilon}) ^{1/4}$ is the Kolmogorov microscale (the smallest eddy size). According to Kolmogorov's $K^{-5/3}$ law:
 
