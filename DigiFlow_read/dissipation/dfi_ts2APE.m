@@ -1,4 +1,4 @@
-function APE = dfi_ts2APE(filename, t0, t1, delta_rho, c0)
+function APE = dfi_ts2APE(filename, t0, t1, delta_rho, c0, ref_y)
 %DFI_TS2APE - Calculates an approximate APE from a column timeseries image
 %Using the method of Boegman et al. (2005). JFM, 531, 159-180. doi:10.1017/S0022112005003915
 %Identifying the pycnocline displacement via the pycnocline detection
@@ -36,22 +36,30 @@ function APE = dfi_ts2APE(filename, t0, t1, delta_rho, c0)
 %% BEGIN CODE %%
 %---------------------------------------------------
 
-close all; 
+close all;
+% Load data
 im = dfireadvel(filename);
 grid = dfi_grid_read(im);
-
-pcolor(grid.xi, grid.yi, im.cdata);
-
+% Locate the pycnocline
 II = find_boundaries(filename, 'pycnocline', [], [], false);
-
 eta = smooth(II.x, II.y_interface, .1, 'rloess');
-hold on
-plot(II.x, eta, '-k')
-ref_y = eta(1);
-%ref_y = 0.2356;
+
+% Plot if requested
+isPlot = true;
+if isPlot
+    pcolor(grid.xi, grid.yi, im.cdata);
+    hold on
+    plot(II.x, eta, '-k')
+    xline([t0 t1], 'w--');
+end
+
+% Calculate pycnocline displacement
+if nargin < 6
+    ref_y = eta(1);
+end
 eta = eta - ref_y;
 
-%% Cut off t0 - t1
+% Cut off t0 - t1
 inds = find((II.x >= t0) & (II.x < t1));
 eta = eta(inds);
 x = II.x(inds);
