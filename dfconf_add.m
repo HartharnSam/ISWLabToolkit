@@ -30,7 +30,11 @@ end
 
 % Then see if the given parameter exists already (replacement) or not
 % (addition)
-str = sprintf('%s = %6.5f', paramName, paramValue);
+if isa(paramValue, 'double');
+    str = sprintf('%s = %6.5f', paramName, paramValue);
+else %Assume it's a character
+    str = sprintf('%s = %s', paramName, paramValue);
+end
 
 if isfield(params, paramName)
 

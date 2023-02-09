@@ -48,10 +48,15 @@ if nargin < 5
 end
 
 %% Read in the "image"
-II.og = dfireadvel(fullfile(image_fname));
-II.im = II.og.cdata;
+if ~isa(image_fname, 'struct')
+    II.og = dfireadvel(fullfile(image_fname));
+    II.im = II.og.cdata;
+    [II.x_range, II.y_range, II.dx, II.dy, II.nx, II.ny, II.x0, II.y0, II.x, II.y] = dfi_grid_read(II.og);
+
+else
+    II = image_fname;
+end
 [II.m,II.n] = size(II.im);
-[II.x_range, II.y_range, II.dx, II.dy, II.nx, II.ny, II.x0, II.y0, II.x, II.y] = dfi_grid_read(II.og);
 
 % Re-allign matrix to correct orientation (important orientation is correct
 % for identifying interfaces etc. later on)
@@ -69,7 +74,7 @@ tmp.image_peak = II.im; % Will be the ice
 tmp.y_interface = NaN(II.nx, 1);
 
 if license('test', 'image_toolbox')
-    tmp.image_peak = imgaussfilt(II.og.cdata,5, 'FilterSize', 11); % filter to smooth image (and thus the detected edges)
+    tmp.image_peak = imgaussfilt(II.im, 5, 'FilterSize', 11); % filter to smooth image (and thus the detected edges)
 end
 
 switch lower(type)
