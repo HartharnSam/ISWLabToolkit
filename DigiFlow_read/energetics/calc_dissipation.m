@@ -101,8 +101,8 @@ e_spec.y = interp1([1, m], y_range, e_spec.y_pix);
 % ----------------------------------------------------
 %% ---- Direct dissipation estimate from gradients ---
 e_dir.x = x; e_dir.y = y;
-e_dir.e_filt = NaN(e_spec.m,e_spec.n);
 [e_dir.e_diff, e_dir.e_image, e_dir.e_1d_x, e_dir.e_1d_y] = dissipation_gradient_2D(U, V, dx, dy, nu);
+e_dir.e_filt = NaN(e_spec.m,e_spec.n);
 
 %% ---- Spectral dissipation estimates ----
 e_spec.e2D = NaN(e_spec.m, e_spec.n);
