@@ -2,11 +2,6 @@
 
 This is a toolkit/collection of scripts, functions, bits of files that help to make the lab work go smoothly in the Geophysical Fluid Dynamics lab in Newcastle University.
 
-## Acknowledgements & Licence
-This really is a collection of projects and scripts from various authors. The project overall was created by Sam Hartharn-Evans. The initial dfireadvel package, which became digiflow_read was created by J.K.Sveen@damtp.cam.ac.uk. The initial dissipation package within DigiFlow_read was created by Peter Sutherland. There are also contributions from Marek Stastna (University of Waterloo), Magda Carr (Newcastle University) and the DJLES package is the Dunphy et al. (2011) package. Where possible, individual acknowledgements have been made within scripts.
-
-The package is licenced under the MIT licence, see LICENSE for more information.
-
 ## Introduction
 The lab data primarily comes in 2 forms, the recorded videos from cameras, processed initially in DigiFlow, and the density data from microconductivity probes (which run on an Arduino system). The scripts contain the main functions to read this data into MATLAB and analyse, as well as in places scripts that interface into other software (primarily here DigiFlow). A couple of the MATLAB scripts help in the basic day-to-day running of the lab, e.g. `copycamfiles.m`, `Camera_parallelisation.m` 
 
@@ -45,7 +40,7 @@ $$ B_t = -cB_x + \epsilon 2r_{10}cBB_x + \mu r_{01}B_{xxx} $$
 
 Where $\phi(z)$ is the vertical structure function, $\epsilon$ is a small dimensionless parameter measuring wave amplitude, $\mu = (H/L)^2$ is a measure of the aspect ratio.
 
-Further discussion on the KdV equation can be found in [Lamb \& Kan 1996](https://doi.org/10.1175/1520-0485(1996)026%3C2712:TEOIWU%3E2.0.CO;2). 
+Further discussion on the KdV equation can be found in [Lamb \& Yan 1996](https://doi.org/10.1175/1520-0485(1996)026%3C2712:TEOIWU%3E2.0.CO;2). 
 
 
 ### DJL
