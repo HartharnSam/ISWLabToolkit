@@ -41,9 +41,9 @@ We get:
 
 $$ \lambda(-D^2+k^2 I)\phi = N^2(z)\phi $$
 
-$$ B_t = -cB_x + \epsilon2r_{10}cBB_x + \mur_{01}B_{xxx}
+$$ B_t = -cB_x + \epsilon 2r_{10}cBB_x + \mu r_{01}B_{xxx} $$
 
-Where $\phi/\epsilon$ is the streamfunction, $\epsilon$ is a small dimensionless parameter measuring wave amplitude, $\mu = (H/L)^2$ is a measure of the aspect ratio.
+Where $\phi(z)$ is the vertical structure function, $\epsilon$ is a small dimensionless parameter measuring wave amplitude, $\mu = (H/L)^2$ is a measure of the aspect ratio.
 
 Further discussion on the KdV equation can be found in [Lamb \& Kan 1996](https://doi.org/10.1175/1520-0485(1996)026%3C2712:TEOIWU%3E2.0.CO;2). 
 
