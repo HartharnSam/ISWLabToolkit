@@ -32,6 +32,27 @@ Then you'll want to add this whole ordeal to your MATLAB path, which can be done
 - `LabWaveProperties.m` *New method of picking points on the pycnocline using MATLAB GUI, and saves/outputs amplitudes and wave velocity. Crucially, saves the picked points for replicability*
 - `setup.sh` *Sets up folder structures each day, makes sure copies of relevant scripts are where they'll need to be later on*
 
+## Wave Solutions
+
+Two scripts are included here (plus the entire DJLES package) which provide analytical solutions to ISWs. This is the Weakly Nonlinear Korteweg de Vries theory, and the fully nonlinear Dubreil-Jacotin-Long (DJL) equation.
+
+### KdV
+We get:
+
+$$ \lambda(-D^2+k^2 I)\phi = N^2(z)\phi $$
+
+$$ B_t = -cB_x + \epsilon2r_{10}cBB_x + \mur_{01}B_{xxx}
+
+Where $\phi/\epsilon$ is the streamfunction, $\epsilon$ is a small dimensionless parameter measuring wave amplitude, $\mu = (H/L)^2$ is a measure of the aspect ratio.
+
+Further discussion on the KdV equation can be found in [Lamb \& Kan 1996](https://doi.org/10.1175/1520-0485(1996)026%3C2712:TEOIWU%3E2.0.CO;2). 
+
+
+### DJL
+Fully nonlinear equation from the steady, incompressible Euler equations. In a constant background current:
+
+$$\nabla^2 \eta + \frac{N^2(z-\eta)}{U_0^2}\eta = 0$$
+
 ## Acknowledgements & Licence
 This really is a collection of projects and scripts from various authors. The project overall was created by Sam Hartharn-Evans. The initial dfireadvel package, which became digiflow_read was created by J.K.Sveen@damtp.cam.ac.uk. The initial dissipation package within DigiFlow_read was created by Peter Sutherland. There are also contributions from Marek Stastna (University of Waterloo), Magda Carr (Newcastle University) and the DJLES package is the Dunphy et al. (2011) package. 
 Where possible, individual acknowledgements have been made within scripts. 
