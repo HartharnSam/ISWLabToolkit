@@ -1,4 +1,4 @@
-function KdV = calc_kdv(Hs, h_2, d, delrho)
+function KdV = calc_kdv(Hs, h_2, d, delrho, amp_perc)
 %CALC_KDV - % pseudospectral solution of the vertical structure
 % of linear internal waves:
 %  lambda(-D^2+k^2 I)phi = N^2(z)phi
@@ -11,7 +11,7 @@ function KdV = calc_kdv(Hs, h_2, d, delrho)
 %    h_2 - Height above bed of pycnocline centre in deepwater limit (H = Hs(1))
 %    d - Pycnocline halfwidth
 %    delrho - density difference (normalised)
-%
+%    amp_perc - Percentage of water column occupied by wave
 % Outputs:
 %    KdV - Output structure of KdV coefficients, and for physical solution
 %    implementation, the physical solutions of the KdV equation
@@ -125,12 +125,12 @@ for ii = 1:length(Hs)
     bot = sum((c_lw_1).*E1p2);
     r10_1(ii) = (-0.75/c_lw_1)*sum((c_lw_1).*(c_lw_1).*E1p3)/bot;
     r01_1(ii) = -0.5*sum((c_lw_1).*(c_lw_1).*E1.*E1)/bot;
-    fprintf('WNL gives: c_lw = %f, r10 = %f, r01 = %f\n\n', c_lw_1, r10_1, r01_1);
+    %fprintf('WNL gives: c_lw = %f, r10 = %f, r01 = %f\n\n', c_lw_1, r10_1, r01_1);
 
     bot = sum((c_lw_2).*E2p2);
     r10_2(ii) = (-0.75/c_lw_2)*sum((c_lw_2).*(c_lw_2).*E2p3)/bot;
     r01_2(ii) = -0.5*sum((c_lw_2).*(c_lw_2).*E2.*E2)/bot;
-    fprintf('WNL gives: c_lw = %2.2f m/s, r10 = %f, r01 = %f\n\n', c_lw_2, r10_2, r01_2);
+    %fprintf('WNL gives: c_lw = %2.2f m/s, r10 = %f, r01 = %f\n\n', c_lw_2, r10_2, r01_2);
 
     c1s(ii) = c_lw_1;
     c2s(ii) = c_lw_2;
@@ -142,15 +142,18 @@ end
 KdV = struct('Depths', Hs, 'c1s', c1s, 'c2s', c2s, 'r10_2', r10_2, 'r10_1', r10_1, 'r01_1', r01_1, 'r01_2', r01_2, 'c_0', c1s(1), 'alpha', alpha, 'beta', beta);
 c_lw = c1s(1);
 
-if length(Hs)>1
+if length(Hs) == 1
     %% Calculate some physical parameters
     % Now optimise the b0, lambda parameters
     E = repmat(E1, 1, NX); E(:,1)=0; E(:,end)=0;
-    b0 = sign(r10_1(ii))*0.05*H;  % Start b0 as 5% of domain height
+    if nargin < 5
+        amp_perc = 0.05; % Start b0 as 5% of domain height
+    end
+    b0 = sign(r10_1(ii))*amp_perc*H;  
     lambda = sqrt( -6*r01_1 / (c_lw_1 * r10_1(ii) * b0) );
     c_nl = (1+(2/3)*r10_1*b0)*c_lw_1;
 
-    fprintf('b0 (Amp) = %2.2f m, lambda = %2.2f m, c_isw = %2.2 m/s \n', b0, lambda, c_nl);
+    %fprintf('b0 (Amp) = %2.2f m, lambda = %2.2f m, c_isw = %2.2f m/s \n', b0, lambda, c_nl);
 
     %% Calculate the corresponding fields (eta, density, u, w)
     eta = -b0*E.*sech((XC-L/2)/lambda).^2;
