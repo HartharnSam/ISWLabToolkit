@@ -21,15 +21,16 @@
 % GitHub: https://github.com/HartharnSam
 % 23-Jan-2023; Last revision: 23-Jan-2023
 % MATLAB Version: 9.12.0.2009381 (R2022a) Update 4
-
+%
 %---------------------------------------------------
 %% BEGIN CODE %%
 %---------------------------------------------------
+
 clearvars; close all; clc;
 %% Set Variables
-im_ice_threshold = 70; % Brightness threshold for the float edge
+im_ice_threshold = 85; % Brightness threshold for the float edge
 ice_thickness = 0.04; % Maximum depth that ice would be detected at (in m)
-ts_level = 500; % Row of pixels to be samples for the hovmoller
+ts_level = 510; % Row of pixels to be samples for the hovmoller
 
 diagnostic_plot = true; % plots (intermittently) the hovmoller and raw image with ice removed for refernece. n.b. it slows down processing a lot
 

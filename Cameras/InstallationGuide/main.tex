@@ -1,0 +1,156 @@
+\documentclass{article}
+
+%All LaTeX documents have a ``preamble'' that includes the packages and macros needed to make the document compile. The file `PomonaLgcsFormatting.tex' includes the preamble for this template. You can see it in the file list on the left frame of your screen, and this document is instructed to use it with the \input{} command below.
+
+\input{mainstyle}
+\definecolor{mygreen}{RGB}{51, 153, 102}
+\definecolor{myblue}{RGB}{0, 0,128}
+\newcommand{\Analyse}[1]{\textcolor{mygreen}{#1}}
+\newcommand{\Files}[1]{\textcolor{myblue}{#1}}
+\newcommand{\Interpreter}[1]{\textcolor{blue}{\texttt{#1}}}
+
+
+\title{DigiFlow: Getting Started for Newcastle}
+\author{Sam Hartharn-Evans - adapted from \copyright Dalziel Research Partners 1999-2013}
+\date{17/04/2023}
+
+\begin{document}
+
+\maketitle
+
+\vspace{-5mm} 
+\tableofcontents
+
+\section{Introduction}
+This document describes the installation and configuration process for DigiFlow with Newcastle Uni's setup (UniqVision UP1830CL cameras, BitFlow Framegrabber boards, Dell Precision 5820 Tower). Use of DigiFlow is covered in the User Guide. 
+
+DigiFlow is an advanced image processing system designed specifically for measuring and analysing fluid flows using a wide variety of techniques developed by Dalziel over the last eighteen years. The installed part of DigiFlow consists of \Analyse{DigiFlow.exe}, which contains the core functionality, and a range of DLL files that handle specific menu optiuons. DigiFlow also makes use of various global start-up files stored in the same directory. 
+
+The Typographical Conventions here are:
+\begin{itemize}
+\item \Analyse{Analyse} - Windows elements such as prompts, menu items and dialogs.  
+\item \Files{Expt\_A.dfi} - File names, \textit{etc.} 
+\item \Interpreter{read\_image()} - Interpreter commands and functions
+\end{itemize}
+
+\section{Basic Installation} \label{sec:BasicInstallation}
+
+Basic installation covers the ability to process images and movies using DigiFlow, but not capture. 
+
+DigiFlow installation requires little more than unpacking the distribution files into the desired directory. This is best done from an account with administrative rights. 
+
+\begin{enumerate}
+    \item Download the latest version from \href{https://www.dropbox.com/sh/uc5nmllmd11pdj1/AADNkwK5MmsYD2JW1gcFcXbTa?dl=0}{Dropbox}. The download file is the Bin64 folder, which should download as a .zip file. 
+    \item Create a directory (folder) for DigiFlow (\Files{C:\textbackslash Program Files (x86)\textbackslash DigiFlow}). It is best to avoid running DigiFlow in this directory, you should always use a directory belonging to a user rather than the system. 
+    \item Change the permissions on this folder so that \Files{Authenticated users} have \Files{Full control}. 
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=\textwidth]{AuthenticatedUsers.png}
+    \end{figure}
+    \item Copy the distribution files from the extracted directory into the DigiFlow directory.
+    \item If you have already been issued with a licence file for this device (\Files{DigiFlow\_Licence.dfc}, then copy this to the installation directory. 
+    \item Add the folder in which DigiFlow is installed to the search path (see \ref{sec:AddToPath}). 
+\end{enumerate}
+There is no need to reboot. DigiFlow can be used at this point, however, it is recommended that you first complete the configuration process described below. 
+
+\section{Completing the setup}
+\subsection{Local Settings}
+As different institutions have different ways of working, DigiFlow allows customisation of some features. These settings are stored in \Files{DigiFlow\_LocalData.dfc}. You may subsequently change these settings if you require by editing this file. Consult the User Guide for details of the contents of \Files{DigiFlow\_LocalData.dfc}. 
+\begin{figure}
+    \includegraphics[width=0.5\textwidth]{LocalData1.png}
+\end{figure}
+\begin{enumerate}
+    \item DigiFlow has both a web-based manual and a pdf copy. The web-based version is recommended. 
+    \item The most useful image/data format with DigiFlow is the \Files{.dfi} file format. While there are many advantages to having DigiFlow automatically compress these files, their use in other applications such as Matlab is simplified if they are not compressed
+    \item Clicking Ok again now shows the main window of DigiFlow, but the installation process continues. 
+\end{enumerate}
+
+\subsection{Adding a Licence}
+If DigiFlow is unable to find a valid licence file (\Files{DigiFlow\_Licence.dfc}), then you will be prompted for the information necessary for Dalziel Research Partners to generate a licence for you on opening DigiFlow. 
+\begin{figure}
+ %   \centering
+    \includegraphics[width=0.5\textwidth]{RequestLicence.png}
+\end{figure}
+\begin{enumerate}
+    \item If you have a licence file already, then respond \Analyse{Yes} and copy the licence file to the directory in which DigiFlow is installed. If you do not already have a licence file, then answer \Analyse{No} and you will be prompted for the information necessary to generate the licence file. 
+    \item And then yes. 
+    \item You'll be prompted for Your name?: \textbf{Magda Carr}, Your university/company? \textbf{Newcastle University}, Your Department? \textbf{Maths, Stats, Physics}, Your Country? \textbf{United Kingdom}, Your e-mail address? \textbf{magda.carr@ncl.ac.uk}, Web address for your research group? \textbf{[Leave Blank]}. 
+    \item The \Files{LicenceRequest.dat} file that is created by this process should be e-mailed to Dalziel Research Partners (\url{digiflow@dalzielresearch.com}). The file will be located in the file in which DigiFlow was started, as indicated in the dialogue box.
+    \item The \Files{LicenceRequest.dat} does not contain any security-sensitive information, or any personal information other than what you enter. Please feel free to view the contents (in a text editor) before sending. 
+\end{enumerate}
+
+\subsection{Windows Settings}
+Specification of the file extension for file names within DigiFlow is mandatory in most circumstances as DigiFlow utilises this extension to determine the file type for output. However, by default, Windows XP and later hide the extensions to files of known types, a feature that can cause problems with DigiFlow. We recommend, therefore, that you turn off this feature. DigiFlow will attempt to do this for itself, but this may not work on some systems. If DigiFlow does not make all extensions visible automatically, then you may achieve this manually through the \Analyse{View} tab of \Analyse{Tools: Folder Options} under \Analyse{Windows Explorer}. Simply remove the check mark from \Analyse{Hide extensions for known file types}. Note that this will need to be done for each DigiFlow user.
+
+\section{Basic Configuration}
+...
+
+
+\section{Full Installation  - With a framegrabber}
+
+\subsection{Framegrabber installation}
+If you are installing DigiFlow in a machine equipped with a BitFlow R2, R3, R64 or R64e series framegrabber then some additional steps are required. \textit{\textbf{These require administrative access to implement.}}
+
+The framegrabber should be installed and tested using the \textbf{BitFlow installation procedure}. You will require the BitFlow drivers for version 6.40. Later versions are currently untested and may not work - we have had issues with these previously. 
+
+\begin{enumerate}
+    \item Download \Files{BitFlow SDK 6.40} from \url{https://www.bitflow.com/support/request-downloads/} (possibly directly at \url{https://www.bitflow.com/downloads/bfsdk640.zip}. 
+    \item Follow the instructions in the SDK Getting Started guide - paying notice to the sections \textit{Installing the SDK}, \textit{Initial System Tests}, and \textit{Configure Your Board for Your Camera - Camera Link Cameras}. 
+\end{enumerate}
+
+The BitFlow framegrabber requires a configuration file (\Analyse{.cam, .rcl} or \Analyse{.r64} for the camera being used. Configuration files for cameras known to work with DigiFlow may be found at \url{https://www.dalzielresearch.com/digiflow/cameras/}, but the correct one for our lab is also found \href{https://github.com/HartharnSam/ISWLabToolkit/blob/e48b0b40e41e7221040feb543a087d1a41793f83/Cameras/UniqVision_UP1830CL_8bit.r64}{here}. Place this file in \Analyse{C:\textbackslash BitFlow SDK 6.40\textbackslash Config\textbackslash R64}.
+
+If you have a multi-user system where most users do not have administrative access, we recommend that you change the permissions on the BitFlow software to allow all users to change the camera configuration file if and when they need to. This is achieved using the Registry Editor (regedit.exe; accessible from the command prompt) to adjust the permissions on all keys in the registry relating to ‘BitFlow’ by adding the ‘Authenticated Users’ security principle with ‘Full control’. Failure to do this would mean that only users with administrative access could change the camera configuration.
+
+\textbf{Once the Framegrabber is installed, then carry out the $\S$ \ref{sec:BasicInstallation} Basic Installation steps.}
+
+If you have a multi-user system where most users do not have administrative access, we recommend that you change the permissions on the BitFlow software to allow all users to change the camera configuration file if and when they need to. This is achieved using the Registry Editor (regedit.exe; accessible from the command prompt) to adjust the permissions
+on all keys in the registry relating to 'BitFlow' by adding the 'Authenticated Users' security principle with 'Full control'. Failure to do this would mean that only users with administrative access could change the camera configuration.
+
+\subsection{Video Capture Configuration}
+It is strongly recommended that video capture is to a disk other than that containing the operating system in order to obtain adequate performance. The necessary disk system bandwidth may be in excess of 240MB/s in some cases (e.g. with a Dalsa 4M60 camera), thus requiring a Mode 0 RAID array, or using Windows to ‘stripe’ across multiple disks. However, for most cameras 40MB/s is sufficient and this may be achieved via a fast IDE or SATA disk (but not the one the operating system is on!).
+
+The capture process in DigiFlow can be configured in two ways. Either you can directly specify the capture file and location each time (risking the user specifying a disk system with insufficient bandwidth), or setting up DigiFlow to capture to a fixed location and require the user to 'review' (and possibly edit) the sequence in order to copy it into their own directory space. For multi-user systems, this second is generally preferred as it allows users to utilise the capture facility like a video recorder while preventing retention of unwanted video footage.
+
+The default configuration takes the second option, and assumes that the capture location is \Files{V:\textbackslash Cache\textbackslash CaptureVideo.dfm}. We recommend that you configure your system so that this directory exists (either by appropriate naming of the capture disk, or by setting up a share to an appropriate point and then connecting to it). This directory must not be compressed and must have full access for all DigiFlow users. Once you have created this directory, you should (within DigiFlow) run \Analyse{File: Live Video: Setup} (see DigiFlow Manual $\S$ 5.1.5.3 for further details) to create the initial \Files{V:/Cache/CaptureVideo.dfm}. \textbf{It is strongly recommended that you do this before writing any other data to the capture disk}. Details on how to change the name or location of the cache file may be found in the main manual $\S$13.2.
+
+It is important that the space DigiFlow reserves in this file remains as a single contiguous block on the disk drive. If it becomes fragmented for any reason then, due to the very high data transfer rates required, DigiFlow may not be able to write to the disk as fast as data becomes available from the camera and so timing errors may result.
+
+Once created, \Files{V:/Cache/CaptureVideo.dfm} will be flagged as Read only by the operating system (although DigiFlow will still be able to write to it). The file will not shrink if a smaller sequence is captured, but may grow if one larger than that specified during \Analyse{File: Live Video: Setup} is requested (note that there is a risk of fragmentation if this occurs). It is important, therefore, that you go through the review process outlined in the main manual $\S$5.1.5.2, rather than simply copying this file, as in general only a part of the file will contain valid data.
+
+Consult the manual $\S$13.2 on \Files{DigiFlow\_LocalData.dfc} should you wish to change the name or location of \Files{V:/Cache/CaptureVideo.dfm}.
+
+\section{Advanced Configuration}
+\subsection{Making the camera capture work}
+On the Dell workstations, there was an issue with write speeds during capture, thought to be due to the Avago RAID Controller card. DigiFlow has an in-built buffer of 8 bits to allow for very small delays. To test if this fix is needed (and fix if it is):
+\begin{itemize}
+    \item Run camera capture for around 300 seconds. After this has happened, if the error has occurred it will notify you of this, and on the second dialogue inform you that there has been a capture error of \# frames. 
+    \item Open \Files{DigiFlow\_Cameras.dfc} within the DigiFlow installation folder in a text editor. Locate the line \Interpreter{CameraInfo. UniqVision\_UP1830CL\_8bit.nTotalBuffers := 8; \# Total number of buffers available}, and change to \Interpreter{:= 256;}. 
+\end{itemize}
+It is also important that the \Analyse{V:} (video capture drive) and \Analyse{C:} (the Windows OS drive, also containing DigiFlow) drives are physically separate drives. 
+
+\subsection{Adding Colormaps}
+To add the redwhiteblue colormap to DigiFlow (useful for viewing piv/vorticity in a divergent and perpetually uniform colormap), edit \Files{DigiFlow\_Configuration.dfc} and add the following text after the final \Interpreter{add\_color_scheme("...");}, and before the \Interpreter{destroy\_variable("r");} lines:
+\begin{lstlisting}
+r := [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0156 0.0313 0.0469 0.0625 0.0781 0.0938 0.109 0.125 0.141 0.156 0.172 0.188 0.203 0.219 0.234 0.25 0.266 0.281 0.297 0.313 0.328 0.344 0.359 0.375 0.391 0.406 0.422 0.438 0.453 0.469 0.484 0.5 0.516 0.531 0.547 0.563 0.578 0.594 0.609 0.625 0.641 0.656 0.672 0.688 0.703 0.719 0.734 0.75 0.766 0.781 0.797 0.813 0.828 0.844 0.859 0.875 0.891 0.906 0.922 0.938 0.953 0.969 0.984 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0.996 0.988 0.98 0.972 0.965 0.957 0.949 0.941 0.933 0.925 0.917 0.909 0.902 0.894 0.886 0.878 0.87 0.862 0.854 0.846 0.839 0.831 0.823 0.815 0.807 0.799 0.791 0.783 0.776 0.768 0.76 0.752 0.744 0.736 0.728 0.72 0.713 0.705 0.697 0.689 0.681 0.673 0.665 0.657 0.65 0.642 0.634 0.626 0.618 0.61 0.602 0.594 0.587 0.579 0.571 0.563 0.555 0.547 0.539 0.531 0.524 0.516 0.508 0.5]; 
+\end{lstlisting}
+\begin{lstlisting}
+    g := [ 0 0.00781 0.0156 0.0234 0.0313 0.0391 0.0469 0.0547 0.0625 0.0703 0.0781 0.0859 0.0938 0.102 0.109 0.117 0.125 0.133 0.141 0.148 0.156 0.164 0.172 0.18 0.188 0.195 0.203 0.211 0.219 0.227 0.234 0.242 0.25 0.258 0.266 0.273 0.281 0.289 0.297 0.305 0.313 0.32 0.328 0.336 0.344 0.352 0.359 0.367 0.375 0.383 0.391 0.398 0.406 0.414 0.422 0.43 0.438 0.445 0.453 0.461 0.469 0.477 0.484 0.492 0.5 0.508 0.516 0.523 0.531 0.539 0.547 0.555 0.563 0.57 0.578 0.586 0.594 0.602 0.609 0.617 0.625 0.633 0.641 0.648 0.656 0.664 0.672 0.68 0.688 0.695 0.703 0.711 0.719 0.727 0.734 0.742 0.75 0.758 0.766 0.773 0.781 0.789 0.797 0.805 0.813 0.82 0.828 0.836 0.844 0.852 0.859 0.867 0.875 0.883 0.891 0.898 0.906 0.914 0.922 0.93 0.938 0.945 0.953 0.961 0.969 0.977 0.984 0.992 1 1 0.984 0.969 0.953 0.937 0.921 0.906 0.89 0.874 0.858 0.843 0.827 0.811 0.795 0.78 0.764 0.748 0.732 0.717 0.701 0.685 0.669 0.654 0.638 0.622 0.606 0.591 0.575 0.559 0.543 0.528 0.512 0.496 0.48 0.465 0.449 0.433 0.417 0.402 0.386 0.37 0.354 0.339 0.323 0.307 0.291 0.276 0.26 0.244 0.228 0.213 0.197 0.181 0.165 0.15 0.134 0.118 0.102 0.0866 0.0709 0.0551 0.0394 0.0236 0.00787 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
+\end{lstlisting} 
+\begin{lstlisting}
+    b := [ 0.5 0.508 0.516 0.523 0.531 0.539 0.547 0.555 0.563 0.57 0.578 0.586 0.594 0.602 0.609 0.617 0.625 0.633 0.641 0.648 0.656 0.664 0.672 0.68 0.688 0.695 0.703 0.711 0.719 0.727 0.734 0.742 0.75 0.758 0.766 0.773 0.781 0.789 0.797 0.805 0.813 0.82 0.828 0.836 0.844 0.852 0.859 0.867 0.875 0.883 0.891 0.898 0.906 0.914 0.922 0.93 0.938 0.945 0.953 0.961 0.969 0.977 0.984 0.992 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0.984 0.969 0.953 0.937 0.921 0.906 0.89 0.874 0.858 0.843 0.827 0.811 0.795 0.78 0.764 0.748 0.732 0.717 0.701 0.685 0.669 0.654 0.638 0.622 0.606 0.591 0.575 0.559 0.543 0.528 0.512 0.496 0.48 0.465 0.449 0.433 0.417 0.402 0.386 0.37 0.354 0.339 0.323 0.307 0.291 0.276 0.26 0.244 0.228 0.213 0.197 0.181 0.165 0.15 0.134 0.118 0.102 0.0866 0.0709 0.0551 0.0394 0.0236 0.00787 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
+add_colour_scheme("redwhiteblue", r, g, b);
+
+\end{lstlisting}
+
+\subsection{Setting the Path} \label{sec:AddToPath}
+\begin{itemize}
+    \item Open the \Files{Edit the system environment variables} panel by searching "Environment" in the Windows start bar. 
+    \item Click the \Files{Environment Variables} to open Environment Variables, and Edit the \Files{System Variables: Path}
+        \begin{figure}[h]
+        \centering
+            \includegraphics[width=\textwidth]{SetPath.png}
+    \end{figure}
+\end{itemize}
+
+\end{document}

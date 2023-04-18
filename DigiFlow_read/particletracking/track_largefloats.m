@@ -19,7 +19,7 @@
 clc; clearvars; close all;
 
 % User parameters
-float_width = 1.2; % Length of the float
+float_width = .35; % Length of the float
 c_isw = 0.1; % Indicative speed of the wave, does not need to be accurate
 n_floats = 1; % Number of float paths the code will record. NB, if the float passes off screen and returns, it will count as 2. 
 

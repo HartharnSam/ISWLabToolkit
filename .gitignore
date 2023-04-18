@@ -1,2 +1,8 @@
 *.png
 *.asv
+*.log
+*.aux
+*.fdb_latexmk
+*.dls
+*.out
+*.toc

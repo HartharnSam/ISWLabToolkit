@@ -32,7 +32,7 @@ if nargin < 3
 end
 if nargin < 4
     isReprocess = true;
-    
+
 end
 digiflowstartup;
 %% Fixed parameters
@@ -54,8 +54,9 @@ if run_number == 2
 end
 
 %% Collate filenames
-new_cam_dir = fullfile(OD_CamDir, dateString, curr_CamName);
-orig_cam_dir = fullfile(D_CamDir, dateString);
+%new_cam_dir = fullfile(OD_CamDir, dateString, curr_CamName);
+new_cam_dir = fullfile(OD_CamDir, dateString, list_CamNames{3});
+orig_cam_dir = fullfile(D_CamDir, dateString, list_CamNames{3});
 
 %% Copy Output Data Files
 copyfile([orig_cam_dir, '\output_*.dfi'], new_cam_dir);
@@ -91,28 +92,28 @@ if isNewWCS % Copy over new wcs to the parent (Holding) folder
 end
 
 %% Copy PTV data if required
-        copyfile([orig_cam_dir, '\piv_hr_*.dfi'], new_cam_dir);
+copyfile([orig_cam_dir, '\piv_hr_*.dfi'], new_cam_dir);
 
 try
-            outputs = ls([orig_cam_dir, '\piv_hr_*.dfi']);
-            im = dfireadvel([orig_cam_dir,'\', outputs(1, :)]);
-        catch
-            warning('PIV image may not be uncompacted/uncompressed')
-        end
+    outputs = ls([orig_cam_dir, '\piv_hr_*.dfi']);
+    im = dfireadvel([orig_cam_dir,'\', outputs(1, :)]);
+catch
+    warning('PIV image may not be uncompacted/uncompressed')
+end
 if curr_CompNumber == 3
     % Copy raw DigiFlow (.txt) output
-%    copyfile([orig_cam_dir, '\ptv_*.txt'], new_cam_dir);
-%    copyfile([orig_cam_dir, '\particles.dfd'], new_cam_dir);
-    
+    %    copyfile([orig_cam_dir, '\ptv_*.txt'], new_cam_dir);
+    %    copyfile([orig_cam_dir, '\particles.dfd'], new_cam_dir);
+
     % Then do the .mat file output too
     if isReprocess || (exist([new_cam_dir, '/ptv_tracks.mat'])~=2)
-     %   particle_tracks(orig_cam_dir);
+        %   particle_tracks(orig_cam_dir);
     end
     try
         copyfile([orig_cam_dir, '\ptv_tracks.mat'], new_cam_dir);
         disp('PTV Files Copied')
     catch
-%        copyfile([orig_cam_dir, '\ptv_*.dfi'], new_cam_dir);
+        %        copyfile([orig_cam_dir, '\ptv_*.dfi'], new_cam_dir);
         try
             outputs = ls([orig_cam_dir, '\ptv_*.dfi']);
             im = dfireadvel([orig_cam_dir,'\', outputs(1, :)]);
@@ -135,7 +136,7 @@ else
     catch
         warning('No PIV Images detected')
     end
-    
+
     % Copy over PIV timeseries
     try
         copyfile([orig_cam_dir, '\piv_ts.dfi'], new_cam_dir);
@@ -148,6 +149,6 @@ else
     catch
         warning('No PIV TS Images detected');
     end
-    
+
 end
 disp('Done')
