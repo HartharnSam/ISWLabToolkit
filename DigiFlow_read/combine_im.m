@@ -1,6 +1,6 @@
 function [im, x, y] = combine_im(filename)
 %COLLATE_IM - Returns image, and grid for multiple images stitched
-%together. 
+%together.
 % It interpolates, so it's not very efficient, but needed when
 %we're calculating things based on it ~0.5s slow for three frames.
 %
@@ -75,12 +75,14 @@ end
 clear im
 y = new_y';
 x = new_x';
-
-im.cdata = im2;
-im.x = new_x'; im.y = new_y';
-im.nx = size(im.x, 1); im.ny = size(im.y, 1);
-im.xWorldPerPixel = im.x(2) - im.x(1);
-im.yWorldPerPixel = im.y(2) - im.y(1);
-im.xOriginWorld = im.x(1); im.yOriginWorld = im.y(1);
-
+if nargout == 1
+    im.cdata = im2;
+    im.x = new_x'; im.y = new_y';
+    im.nx = size(im.x, 1); im.ny = size(im.y, 1);
+    im.xWorldPerPixel = im.x(2) - im.x(1);
+    im.yWorldPerPixel = im.y(2) - im.y(1);
+    im.xOriginWorld = im.x(1); im.yOriginWorld = im.y(1);
+else
+    im = im2;
+end
 end
