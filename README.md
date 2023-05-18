@@ -59,3 +59,6 @@ The package is licenced under the MIT licence, see `LICENSE` for more informatio
 Things I found useful in this code writing:
 - [MatPIV](https://www.mn.uio.no/math/english/people/aca/jks/matpiv/): A package which does the same PIV and PTV calculations in MATLAB. Helped me understand what's going on.
 - [ISW_ParticleTrackModel](https://github.com/HartharnSam/ISW_ParticleTrackModel) : A Package for tracking particles at the surface as part of the ISW in Ice Covered Waters Project (ONE Planet PhD Studentship)
+
+## Versioning 
+https://travishorn.com/semantic-versioning-with-git-tags-1ef2d4aeede6 Tool provided using the following guide 
