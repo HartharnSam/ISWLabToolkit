@@ -13,19 +13,27 @@ Then you'll want to add this whole ordeal to your MATLAB path, which can be done
 - temporarily with  ```addpath(genpath('path/to/the/toolkit'));```
 - permanently by adding the addpath... code to `startup.m`. startup.m should be found in the file you find by typing userpath into the matlab command window - if it is not, create one.
 
-## Files:
-- /Cameras *This directory should contain files needed for camera operation in DigiFlow. More detailed README within*
-- /DigiFlow_read *This directory should contain files needed for reading & processing DigiFlow data in MATLAB. More detailed README within*
-- /DJLES *DJL Solver for MATLAB. Submodule only - so links directly to the GitHub repository.* 
-- /Probes *More detailed README within*
-	- /Probe Drivers *This directory should contain files needed for operating the probes using the arduino software.*
-	- ./ *Main directory contains files needed for processing probe data in MATLAB*
-- `calc_DJL.m` *Calculates a DJL wave to match a given lab setup (e.g. actual densities, layer depths & wave amplitude)*
-- `calc_kdv.m` *Same as calc_DJL but for a kdv wave*
-- `Camera_parallelisation.m` *helps in the task of parallelising the cameras to the tank*
-- `copycamfiles.m` *copies the day's data from local D: drives to a central OneDrive - always needs modifications to new systems*
-- `LabWaveProperties.m` *New method of picking points on the pycnocline using MATLAB GUI, and saves/outputs amplitudes and wave velocity. Crucially, saves the picked points for replicability*
-- `setup.sh` *Sets up folder structures each day, makes sure copies of relevant scripts are where they'll need to be later on*
+## Contents:
+### Directories
+- [`/Cameras`](./Cameras) *This directory should contain files needed for camera operation in DigiFlow. More detailed README within*
+- [`/DigiFlow_read`](./DigiFlow_read) *This directory should contain files needed for reading & processing DigiFlow data in MATLAB. More detailed README within*
+- [`/DJLES`](./DJLES) *DJL Solver for MATLAB. Submodule only - so links directly to the GitHub repository.* 
+- [`/Probes`](./Probes) *More detailed README within*
+	- [`/ProbeDrivers`](./ProbeDrivers/) Drivers *This directory should contain files needed for operating the probes using the arduino software.*
+	- [`./`](./Probes) *Main directory contains files needed for processing probe data in MATLAB*
+- [`/extras`](./extras) * Just some helper functions that are called by other functions here*
+### Wavemaker codes
+- [`calc_DJL.m`](calc_DJL.m) *Calculates a DJL wave to match a given lab setup (e.g. actual densities, layer depths & wave amplitude)*
+- [`calc_DJL_fromAPE.m`](calc_DJL_fromAPE.m) * As above, but with input of APE, not amplitude*
+- [`calc_kdv.m`](calc_kdv.m) *Same as calc_DJL but for a kdv wave*
+### Setup Codes
+- [`camera_parallelisation.m`](camera_parallelisation.m) *helps in the task of parallelising the cameras to the tank*
+- [`copycamfiles.m`](copycamfiles.m) * Copies the day's data from local D: drives to a central OneDrive - always needs modifications to new systems*
+- [`setup.sh`](setup.sh) *Sets up folder structures each day, makes sure copies of relevant scripts are where they'll need to be later on*
+### Standalone Post-Processing
+- [`LabWaveProperties.m`](LabWaveProperties.m) *New method of picking points on the pycnocline using MATLAB GUI, and saves/outputs amplitudes and wave velocity. Crucially, saves the picked points for replicability. Now also does wavelength measurements*
+- [`dfconf_add.m`](dfconf_add.m) * Adds variables (or initialises) a df.conf file in the current directory to store experiment-specific data in a way that is readable by dfconf_params *
+- [`dfconf_params.m`](dfconf_params.m) * Reads in the variables in a df.conf file to a MATLAB structure *
 
 ## Wave Solutions
 
@@ -49,11 +57,9 @@ Fully nonlinear equation from the steady, incompressible Euler equations. In a c
 $$\nabla^2 \eta + \frac{N^2(z-\eta)}{U_0^2}\eta = 0$$
 
 ## Acknowledgements & Licence
-This really is a collection of projects and scripts from various authors. The project overall was created by Sam Hartharn-Evans. The initial dfireadvel package, which became digiflow_read was created by J.K.Sveen@damtp.cam.ac.uk. The initial dissipation package within DigiFlow_read was created by Peter Sutherland. There are also contributions from Marek Stastna (University of Waterloo), Magda Carr (Newcastle University) and the DJLES package is the Dunphy et al. (2011) package. 
-Where possible, individual acknowledgements have been made within scripts. 
+This really is a collection of projects and scripts from various authors. The project overall was created by Sam Hartharn-Evans. The initial dfireadvel package, which became digiflow_read was created by J.K.Sveen@damtp.cam.ac.uk. The initial dissipation package within DigiFlow_read was created by Peter Sutherland. There are also contributions from Marek Stastna (University of Waterloo), Magda Carr (Newcastle University) and the DJLES package is the Dunphy et al. (2011) package. Where possible, individual acknowledgements have been made within scripts. 
 
-The package is licenced under the MIT licence, see `LICENSE` for more information. 
-
+The package is licenced under the MIT licence, see [`LICENSE`](LICENCE) for more information. 
 
 ## Further Reading
 Things I found useful in this code writing:
@@ -61,4 +67,4 @@ Things I found useful in this code writing:
 - [ISW_ParticleTrackModel](https://github.com/HartharnSam/ISW_ParticleTrackModel) : A Package for tracking particles at the surface as part of the ISW in Ice Covered Waters Project (ONE Planet PhD Studentship)
 
 ## Versioning 
-https://travishorn.com/semantic-versioning-with-git-tags-1ef2d4aeede6 Tool provided using the following guide 
+Versioning Tool for GitHub is provided using the following [guide](https://travishorn.com/semantic-versioning-with-git-tags-1ef2d4aeede6)
