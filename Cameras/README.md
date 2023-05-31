@@ -7,7 +7,7 @@ This directory should contain files needed for camera operation in DigiFlow.
 - [dft2txt.dfc](./dft2txt.dfc): DigiFlow Code to export .dft format files (produced in Particle Tracking Velocimetry) to more reader-friendly .txt formats
 
 ## Dependencies
-- Current copy of DigiFlow can be found [here](https://www.dropbox.com/sh/uc5nmllmd11pdj1/AADNkwK5MmsYD2JW1gcFcXbTa?dl=0)
+- A current installation guide for DigiFlow \& BitFlow can be found [here](https://github.com/HartharnSam/DigiFlow-Installation) , but note this is in a private repository, due to links to restricted links - please contact the owner of this repository to get access! 
 - We use BitFlow SDK6.40. Newer versions may exist, but we know this version works
 
 ## twocameras
