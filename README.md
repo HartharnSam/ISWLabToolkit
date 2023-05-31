@@ -3,7 +3,7 @@
 This is a toolkit/collection of scripts, functions, bits of files that help to make the lab work go smoothly in the Geophysical Fluid Dynamics lab in Newcastle University.
 
 ## Introduction
-The lab data primarily comes in 2 forms, the recorded videos from cameras, processed initially in DigiFlow, and the density data from microconductivity probes (which run on an Arduino system). The scripts contain the main functions to read this data into MATLAB and analyse, as well as in places scripts that interface into other software (primarily here DigiFlow). A couple of the MATLAB scripts help in the basic day-to-day running of the lab, e.g. `copycamfiles.m`, `Camera_parallelisation.m` 
+The lab data primarily comes in 2 forms, the recorded videos from cameras, processed initially in DigiFlow, and the density data from microconductivity probes (which run on an Arduino system). The scripts contain the main functions to run the systems, read this data into MATLAB and analyse, as well as in places scripts that interface into other software (primarily here DigiFlow). A couple of the MATLAB scripts help in the basic day-to-day running of the lab, e.g. `copycamfiles.m`, `Camera_parallelisation.m`. 
 
 ## Installation 
 ### Full Installation
@@ -16,10 +16,10 @@ Then you'll want to add this whole ordeal to your MATLAB path, which can be done
 ## Files:
 - /Cameras *This directory should contain files needed for camera operation in DigiFlow. More detailed README within*
 - /DigiFlow_read *This directory should contain files needed for reading & processing DigiFlow data in MATLAB. More detailed README within*
-- /DJLES *DJL Solver for MATLAB. Submodule only - so links directly to the github repository.* 
+- /DJLES *DJL Solver for MATLAB. Submodule only - so links directly to the GitHub repository.* 
 - /Probes *More detailed README within*
-	- /Probe Drivers *This directory should contain files needed for operating the probes using the arduino software. 
-	- Main directory contains files needed for processing probe data in MATLAB
+	- /Probe Drivers *This directory should contain files needed for operating the probes using the arduino software.*
+	- ./ *Main directory contains files needed for processing probe data in MATLAB*
 - `calc_DJL.m` *Calculates a DJL wave to match a given lab setup (e.g. actual densities, layer depths & wave amplitude)*
 - `calc_kdv.m` *Same as calc_DJL but for a kdv wave*
 - `Camera_parallelisation.m` *helps in the task of parallelising the cameras to the tank*
