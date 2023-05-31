@@ -19,7 +19,7 @@ To make plots from any kind of dfi output (a timeseries, PIV, or raw image) use 
 A very basic starting code could also be:
 ```
 im = dfireadvel('filename'); [x, y, dx, dy, nx, ny, x0, y0, xi, yi] = dfi_grid_read(im);
-imagesc(x, y, im.cdata(:, :, 1)); singlecycle; 
+imagesc(x, y, im.cdata(:, :, 1)); singlecycle; set(gca, 'YDir', 'normal');
 ``` 
 `dfi_image.m` is a now-redundant function to call `plot_dfi` and format those images, but it does help with example scripts. 
 
@@ -29,7 +29,7 @@ im = dfireadvel('output_0000.dfi'); [x, y, dx, dy, nx, ny, x0, y0, xi, yi] = dfi
 for ii = 1:100
 	fnm_in = strrep('output_####.dfi', '####', sprintf('%04d', ii));
 	im = dfireadvel(fnm_in); 
-	imagesc(x, z, im.cdata(:, :, 1));
+	imagesc(x, y, im.cdata(:, :, 1)); set(gca, 'YDir', 'normal'); drawnow;
 end
 ``` 
 is useful. 
