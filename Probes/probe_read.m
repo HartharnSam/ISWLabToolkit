@@ -172,7 +172,7 @@ for probe = probes
     param = [rho_mid(ii) (rho_mid(ii)-fit_bot(ii))];    % initial guess
     tanh_lb = [0 0]; tanh_ub = [total_depth total_depth]; % Set physical bounds for the pycnocline width and depths as total water depth
     tanh_fit(:,ii) = lsqcurvefit(func, param, phys(:,1), phys(:,probe), tanh_lb, tanh_ub);
-    plot(func(tanh_fit(:, ii), phys(:,4)), phys(:,4), ':', 'Color', clr(ii), ...
+    plot(func(tanh_fit(:, ii), phys(:,1)), phys(:,1), ':', 'Color', clr(ii), ...
         'DisplayName',num2str(probes(ii)'-1, 'tanh %-d'));
     ii=ii+1;
 end
