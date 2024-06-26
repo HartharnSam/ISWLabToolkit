@@ -7,3 +7,4 @@
 *.out
 *.toc
 holding
+*calc_reynoldsdecompos.m

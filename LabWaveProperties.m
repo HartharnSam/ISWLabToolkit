@@ -1,12 +1,13 @@
-function LabWaveProperties(filename, y_ref, colormap, type, amplitude)
+function LabWaveProperties(filename, y_ref, clrmap, type, amplitude)
 %LabWaveProperties - Takes user mouse click input to measure streamline
 %displacement of digiflow timeseries image. Saves all to png image
+
 %
 % Inputs:
 %    filename - filename as "ts_c200" (potentially including path), without
 %    extension
 %    y_ref - [Optional] Reference y line to plot (usually pyc depth)
-%    colormap - [Optional] Colormap to use
+%    clrmap - [Optional] Colormap to use
 %    type - [Optional, default "amp"] Parameter set to calculate ("amp" or
 %    "wavelength")
 %
@@ -19,7 +20,7 @@ function LabWaveProperties(filename, y_ref, colormap, type, amplitude)
 % School of Mathematics, Statistics and Physics, Newcastle University
 % email address: s.hartharn-evans2@newcastle.ac.uk
 % GitHub: https://github.com/HartharnSam
-% 15-Feb-2022; Last revision: 15-Feb-2022
+% 15-Feb-2022; Last revision: 26-Jun-2024
 % MATLAB Version: 9.10.0.1851785 (R2021a) Update 6
 
 %---------------------------------------------------
@@ -30,7 +31,7 @@ input_fnm = join([filename, ".dfi"], '');
 
 % Load and plot data
 if nargin > 2
-    ArgsIn.colormap = colormap;
+    ArgsIn.colormap = clrmap;
 else
     ArgsIn.colormap = 'greyscale';
 end
@@ -49,7 +50,14 @@ end
 
 %
 im = dfireadvel(input_fnm);
-contour(im.x, im.y, im.cdata, '-', 'Color', [1 1 1].*.2)
+cannyedge = true;
+if cannyedge
+    Im = edge(im.cdata, 'Canny', [.001 .2]);
+    contour(im.x, im.y, Im, '-', 'Color', [0 1 1]);
+    
+else
+    contour(im.x, im.y, im.cdata, '-', 'Color', [1 1 1].*.2)
+end
 
 switch lower(type)
     case 'amp'

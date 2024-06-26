@@ -87,7 +87,7 @@ for ii = 1:length(Hs)
         plot(myrho(zphys), zphys);
     end
 
-    n2physical=myn2(zphys);
+    n2physical = myn2(zphys);
 
     %% Solve KdV
     % make up the matrices for the e-val prog.
