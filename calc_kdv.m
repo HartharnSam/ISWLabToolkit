@@ -98,7 +98,8 @@ for ii = 1:length(Hs)
     B2 = sparse(Dzzc);
     % Solve the e-val prob
     [V, cc] = polyeig(B0, B1, B2);
-
+    cc = real(cc); 
+    V = real(V);
     [c, ci]=sort(cc,'descend'); c_lw_1 = c(1); c_lw_2 = c(2);
 
     % Add boundary conditions

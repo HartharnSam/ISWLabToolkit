@@ -34,7 +34,7 @@ addpath([m_path, 'DJLES'])
 
 L  = 14.0;  % domain width (m)
 H  = h_1+h_2;  % domain depth (m)
-a_d = 0.019/2; % del_rho
+%a_d = 0.019/2; % del_rho
 delrho = abs(rho_1 - rho_2)/rho_2; %
 a_d = delrho/2;
 z0_d = h_1 + (h_pyc/2); % depth of pycnocline
