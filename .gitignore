@@ -8,3 +8,4 @@
 *.toc
 holding
 *calc_reynoldsdecompos.m
+*.mat
