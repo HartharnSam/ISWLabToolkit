@@ -1,4 +1,4 @@
-function [im]=dfireadvel(fn,inp)
+function [im]=dfiread(fn,inp)
 % DFIREAD - read DigiFlow floating point format (.dfi) images
 %
 % im=dfiread('filename.dfi'); will read the full DigiFlow image file

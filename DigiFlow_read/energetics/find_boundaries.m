@@ -41,7 +41,7 @@ if nargin < 3 || (isempty(ice_thickness) && strcmpi(type, 'ice'))
     ice_thickness = .05;
 end
 if nargin < 4 || (isempty(im_ice_threshold) && strcmpi(type, 'ice'))
-    ice_thickness = 100;
+    im_ice_threshold = 100;
 end
 if nargin < 5
     diagnostic = false;
@@ -74,7 +74,7 @@ tmp.image_peak = II.im; % Will be the ice
 tmp.y_interface = NaN(II.nx, 1);
 
 if license('test', 'image_toolbox')
-    tmp.image_peak = imgaussfilt(II.im, 5, 'FilterSize', 11); % filter to smooth image (and thus the detected edges)
+    tmp.image_peak = imgaussfilt(II.im, 5, 'FilterSize', [1 25]); % filter to smooth image (and thus the detected edges)
 end
 
 switch lower(type)
@@ -106,6 +106,19 @@ switch lower(type)
         II.image_deep_peak = tmp.image_peak;
         II.y_interface = tmp.y_interface;
         
+    case 'surface'
+        tmp.image_peak(II.y < max(II.y)*.9, :) = NaN; % Remove data near-surface + bed
+        for i_pix = 1:II.nx
+            % surface (brightness peak at top of tank)
+            try
+                [~, locs_d(i_pix)] = findpeaks(double(tmp.image_peak(:, i_pix)), 'SortStr', 'descend', 'NPeaks', 1);
+                tmp.y_interface(i_pix) = II.y(locs_d(i_pix));% Y Location of the lower brightness peak (pycnocline)
+            catch
+            end
+        end
+        %II.qpy = [tmp.y_interface ones(II.nx, 1)*max(II.y_range)]'; % Identifies region filled by ice
+        II.image_shallow_peak = tmp.image_peak;
+        II.y_surface = tmp.y_interface;
 end
 
 %% Select ice bottom and layer interface based on ice thickness
