@@ -1,4 +1,4 @@
-function ax = plot_timeslices(ColumnProperties, c_range, labelled_columns, ylims)
+function ax = plot_timeslices_magda(ColumnProperties, c_range, labelled_columns, ylims)
 %PLOT_LAB_VS_NUMERICS - Plots panelled figure showing lab vs numerics at a chosen
 %number of comparable times.
 %
@@ -71,8 +71,11 @@ for jj = 1:n_columns
         cd(ColumnProperties{jj}.DirectoryName);
 
         s{jj} = plot_model(ColumnProperties{jj}, jj, clrmap, c_range, contour_clrmap, labelled_columns, s{jj}, ylims);
+    elseif strcmpi(ColumnProperties{jj}.Type, 'Lab')
+        plot_lab(ColumnProperties{jj}, jj, clrmap, c_range, n_columns);
     else
-        warning('Type must be Model');
+
+        warning('Type must be Model or Lab');
     end
     drawnow;
     cd(orig_dir);
@@ -80,7 +83,6 @@ end
 ax = s;
 cd(orig_dir);
 
-end
 
 function s = plot_model(ColumnProperties, column_number, ~, c_range, contour_clrmap, labelled_columns, s, ylims)
 %% Load in model key parameters
@@ -290,10 +292,10 @@ for i=1:n_times
             u_diff = u - u_ref;
             w_diff = w - w_ref;
 
-           ke_diff = 0.5*rho0.*(u_diff.^2 + w_diff.^2);
-           %ke_diff = ke - ke_ref; Problem with this is it can return -ve
-           %values
-                
+            ke_diff = 0.5*rho0.*(u_diff.^2 + w_diff.^2);
+            %ke_diff = ke - ke_ref; Problem with this is it can return -ve
+            %values
+
 
             pcolor(s(i),x,z,ke_diff)
             shading(s(i),'flat')
@@ -572,5 +574,102 @@ for i=1:n_times
     %text(xlimits(1)*.1 + xlimits(2)*.9, -0.25, ['t = ', num2str(actual_times(actual_otpt_nums == ii)),' s'], 'FontSize', 14); % Writes the time of each plot
 
 end
-
+function plot_lab(col_inputs, column_number, clrmap, c_range, n_columns)
+if isfield(col_inputs, 'c_range')
+    c_range = col_inputs.c_range;
 end
+x1 = col_inputs.x1;
+y1 = col_inputs.y1;
+%% Sort out grids and times for lab piv
+fig = gcf;
+fnm_placeholder = "####";
+lab_fname = cell(length(col_inputs.DirectoryName), 1);
+
+%Read in for each camera section of total frame
+x_lab = nan(length(col_inputs.DirectoryName), 2); y_lab = x_lab;
+figure(fig);
+
+%% Plot
+for i=1:length(col_inputs.Times)
+    if ~isnan(col_inputs.Times(i))
+        s(i, column_number) = subaxis(length(col_inputs.Times),n_columns, column_number, i, 'SpacingHoriz', .1, 'MarginRight', .13);
+        title(subplot_labels(length(col_inputs.Times).*(column_number-1) +i  , 2));
+        s(i, column_number).TitleHorizontalAlignment = 'left';
+        for j = 1:length(col_inputs.DirectoryName)
+            if i == 1
+                if isfield(col_inputs, 'Field') && strcmpi(col_inputs.Field, 'image')
+                    lab_fname{j} = fullfile(col_inputs.DirectoryName{j}, 'output_####.dfi');
+                    clrmap = 'singlecycle';
+                else
+                    lab_fname{j} = fullfile(col_inputs.DirectoryName{j}, 'piv_####.dfi');
+                end
+                ArgsIn = struct('colormap', clrmap, 'c_range', c_range, 'q_scale', .2,...
+                    'Resolution', 12, 'Parameter', 1, 'SlopeLims', x1, 'Slope', y1);
+                framenumbers(j, :) = round((col_inputs.Times.*col_inputs.FrameRate)-col_inputs.LabTimeOffset(j));
+            end
+
+            ii = framenumbers(j, i);
+            lab_fnm_in = strrep(lab_fname{j}, fnm_placeholder, sprintf('%04d',ii));
+            im = dfireadvel(lab_fnm_in); % read .dfi file
+            if i == 1
+
+                [Grids.x, Grids.y, Grids.dx, Grids.dy, Grids.nx, Grids.ny, Grids.x0, Grids.y0, Grids.xi, Grids.yi] = dfi_grid_read(im);
+                x_lab(j, :) = Grids.x; y_lab(j, :) = Grids.y-.3; %x2 = Grids.x2; y2 = Grids.y2;
+                xlimits = [min(x_lab, [], 'all') max(x_lab, [], 'all')];
+                ylimits = [min(y_lab, [], 'all') max(y_lab, [], 'all')];
+            end
+            %if isfield(col_inputs, 'Field') && strcmpi(col_inputs.Field, 'image')
+            %    imagesc(x_lab(j, :), y_lab(j, :), im.cdata(:, :, 1), c_range);
+            %else
+            imagesc(x_lab(j, :), y_lab(j, :), im.cdata(:, :, 1), c_range);
+            %end
+            hold on
+
+        end
+
+        eval(['colormap(s(i, column_number), "', clrmap, '");']);
+
+        a=area(x1,y1, -.3);
+        a(1).FaceColor = [1 1 1]; %comment out in old versions of matlab
+        a(1).EdgeColor = 'k';
+        rectangle('position', [xlimits(1), ylimits(1), xlimits(2), ylimits(2)], 'edgecolor', 'k');
+
+        if i == length(find(~isnan(col_inputs.Times)))
+            xlabel('$x (m)$')
+        else
+            xticklabels([]);
+
+        end
+
+        tick_chooser('XTick', s(i, column_number));
+
+        if column_number == n_columns && ~(isfield(col_inputs, 'Field') && strcmpi(col_inputs.Field, 'image'))
+            originalSize = get(s(i, column_number), 'Position');
+            c = colorbar;
+            if ~(isfield(col_inputs, 'Field') && strcmpi(col_inputs.Field, 'image'))
+                set(c, 'YTick', [min(c_range) (min(c_range)+max(c_range))/2 max(c_range)]);
+            else
+                set(c, 'YTick', [min(c_range) max(c_range)]);
+            end
+
+            ylabel(c, '$u (ms^{-1})$')
+            set(s(i, column_number), 'Position', originalSize);
+            yticklabels([]);
+
+        end
+        if column_number == 1
+            ylabel('$z (m)$');
+        end
+        %text((x1(1)*.1 + x1(2)*.9), .3-0.25, ['t = ', num2str(col_inputs.Times(i)), ' s'], 'FontSize', 14); % Writes the time of each plot
+        daspect([1 1 1]);
+
+        ylim([0 .3]-.3);
+        xlim([max(xlimits(1), x1(1)) min(xlimits(2), x1(2))]);
+        box on
+        tick_chooser('XTick', s(i, column_number));
+        set(gca, 'XDir', 'reverse')
+    end
+end
+
+
+

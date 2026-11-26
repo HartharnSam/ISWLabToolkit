@@ -41,8 +41,8 @@ for i = 1:n_cameras
     % these contain all coordinate data for dfireadvel, may want to be any generic .dfi image?
     
     im=dfireadvel([piv_list(1).folder, '\', piv_list(1).name]); %File name, read in uncompressed AND uncompacted piv file
-    [x(i, :), y(i, :), dx(i), dy(i), nx(i), ny(i), x0(i), y0(i)]  = dfi_grid_read(im);
-    [~, ~, ~, ~, ~, ~, ~, ~, xs(i, 1:nx(i)), ys(i, 1:ny(i))] = dfi_grid_read(im);
+    [x(i, :), y(i, :), dx(i), dy(i), nx(i), ny(i), x0(i), y0(i), xs(i, 1:nx(i)), ys(i, 1:ny(i))]  = dfi_grid_read(im);
+    %[~, ~, ~, ~, ~, ~, ~, ~, xs(i, 1:nx(i)), ys(i, 1:ny(i))] = dfi_grid_read(im);
 end
 
 %% Match times (time as number of frames)
